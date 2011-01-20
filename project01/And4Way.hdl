@@ -1,0 +1,21 @@
+// This file is part of the materials accompanying the book 
+// "The Elements of Computing Systems" by Nisan and Schocken, 
+// MIT Press. Book site: www.idc.ac.il/tecs
+// File name: projects/01/And16.hdl
+
+/**
+ * 4 input And gate
+ */
+
+CHIP And4Way {
+
+    IN  a, b, c, d;
+    OUT out;
+
+    PARTS:
+    And(a=a, b=b, out=ab);
+    And(a=ab, b=c, out=abc);
+    And(a=abc, b=d, out=out);
+
+}
+
