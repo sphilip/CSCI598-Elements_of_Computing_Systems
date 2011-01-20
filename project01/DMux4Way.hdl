@@ -29,6 +29,6 @@ CHIP DMux4Way {
 
     And(a=in, b=sel[0], out=insel0);
     And(a=insel0, b=sel[1], out=d);
-    
+  
     }
 
