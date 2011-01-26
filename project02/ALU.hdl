@@ -8,13 +8,13 @@
  * where x and y are two 16-bit inputs. The function f is selected 
  * by a set of 6 control bits denoted zx, nx, zy, ny, f, no.
  * The ALU operation can be described using the following pseudocode:
- *     if zx=1 set x = 0       // 16-bit zero constant
- *     if nx=1 set x = !x      // Bit-wise negation
- *     if zy=1 set y = 0       // 16-bit zero constant
- *     if ny=1 set y = !y      // Bit-wise negation
- *     if f=1  set out = x + y // Integer 2's complement addition
- *     else    set out = x & y // Bit-wise And
- *     if no=1 set out = !out  // Bit-wise negation
+ *     if zx=1 set x = 0       // 16-bit zero constant			x
+ *     if nx=1 set x = !x      // Bit-wise negation			x
+ *     if zy=1 set y = 0       // 16-bit zero constant			x
+ *     if ny=1 set y = !y      // Bit-wise negation			x
+ *     if f=1  set out = x + y // Integer 2's complement addition	x
+ *     else    set out = x & y // Bit-wise And				x
+ *     if no=1 set out = !out  // Bit-wise negation			x
  *
  * In addition to computing out, the ALU computes two 1-bit outputs:
  *     if out=0 set zr = 1 else zr = 0 // 16-bit equality comparison
@@ -41,5 +41,45 @@ CHIP ALU {
         ng; // 1 if out<0, 0 otherwise
 
     PARTS:
-    // Implementation missing.
+    /*
+    sel | out
+    -----------
+    0   |  a
+    1   |  b
+    */
+
+    // Zero the x input (zx)
+    Mux16(a=x, b=false, sel=zx, out=zxout);
+
+    // Negate x input (nx)
+    Not16(in=zxout, out=notx);
+    Mux16(a=zxout, b=notx, sel=nx, out=xout);
+
+    // Zero the y input (zy)
+    Mux16(a=y, b=false, sel=zy, out=zyout);
+
+    // Negate y input (ny)
+    Not16(in=zyout, out=noty);
+    Mux16(a=zyout, b=noty, sel=ny, out=yout);
+
+    // 1=add, 0=and (f)
+    Add16(a=xout, b=yout, out=xplusy);
+    And16(a=xout, b=yout, out=xandy);
+    Mux16(a=xandy, b=xplusy, sel=f, out=fout);
+
+    // Negate output (no)
+    Not16(in=fout, out=notout);
+    Mux16(a=fout, b=notout, sel=no, out[0..7]=nout1, out[8..15]=nout2, out[15]=msb, out=out);	
+
+    // if out = 0 then  zr=1 
+    Or8Way(in=nout1, out=out1);     
+    Or8Way(in=nout2, out=out2);    
+    Or(a=out1, b=out2, out=iszero);
+    Not(in=iszero, out=zr);
+
+    // Set ng=1 if out<0
+    And(a=msb, b=true, out=ng);
+    
+    
+
 }
