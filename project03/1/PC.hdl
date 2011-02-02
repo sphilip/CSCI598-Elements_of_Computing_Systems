@@ -16,7 +16,25 @@ CHIP PC {
 
     IN  in[16], load, inc, reset;
     OUT out[16];
+    
+    /*
+    wat
+    reset	| load | inc	| wat happens?
+    -----------------------------------
+     0  			0			0			previous out
+     0				0			1			inc
+     0				1			x			load
+     1				x			x			reset
+     */
 
     PARTS:
-    // Implementation missing.
+		Inc16(in=previousout, out=incout);
+		Mux16(a=incout, b=in, sel=load, out=incloadmux);
+		
+		Mux16(a=incloadmux, b=false, sel=reset, out=resetmux);
+		
+		Or(a=reset, b=load, out=resetorload);
+		Or(a=resetorload, b=inc, out=resetorloadorinc);
+		
+		Register(in=resetmux, load=resetorloadorinc, out=out, out=previousout);
 }
