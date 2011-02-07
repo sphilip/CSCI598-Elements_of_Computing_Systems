@@ -3,7 +3,7 @@
 // MIT Press. Book site: www.idc.ac.il/tecs
 // File name: projects/04/mult/Mult.tst
 
-load Mult.hack,
+load Mult.asm,
 output-file Mult.out,
 compare-to Mult.cmp,
 output-list RAM[2]%D2.6.2;
