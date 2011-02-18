@@ -1,0 +1,16 @@
+Test Design is based on the "Equivalence partition" testing approach
+According to "Hack" specification there are 8 types of jumps and 3 major input
+values :
+		IN > 0
+		IN < 0
+		IN == 0
+Which gives 24	test cases, given that 3 valid partitions are >0, 0 and >0.
+Test specification is given by 2 .asm files - for CPU and the topmost CHIP.
+The difference in design is caused by the absence of memory in the CPU chip,
+where input values should be explicitly assigned before jumps, apart from that
+they are similar.
+
+Tests are divided into 2 parts - jumps and non-jumps for all 3 partitions.
+	non-jumps - values frmo invalid partitions (jumps are not performed)
+	jumps - values from valid partitions (jumps are performed)
+	

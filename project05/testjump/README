@@ -1,0 +1,14 @@
+	CPUnomemory.tst - testing CPU chip itself	
+	CPUnomemory.asm - asm specification
+	CPUnomemory.cmp - compare file
+	
+	copmuterJump.tst - testing jumps in a computer chip
+	copmuterJump.asm - asm specification
+	copmuterJump.cmp - compare file
+				  
+The major difference between  CPUnomemory and copmuterJump and is that CPU has no memory 
+and values for jumps should be assigned explicitly right before the jump. 
+The specifications for tests are done via .asm files. 
+
+concat.pl - automatic generation of CPUnomemory.tst based of .asm specification, 
+TestLogic - test design 
