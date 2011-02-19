@@ -1,28 +1,28 @@
-// This file is part of the materials accompanying the book 
-// "The Elements of Computing Systems" by Nisan and Schocken, 
+// This file is part of the materials accompanying the book
+// "The Elements of Computing Systems" by Nisan and Schocken,
 // MIT Press. Book site: www.idc.ac.il/tecs
 // File name: projects/05/CPU.hdl
 
 /**
  * The Central Processing unit (CPU).
- * Consists of an ALU and a set of registers, designed to fetch and 
+ * Consists of an ALU and a set of registers, designed to fetch and
  * execute instructions written in the Hack machine language.
  * In particular, functions as follows:
- * Executes the inputted instruction according to the Hack machine 
+ * Executes the inputted instruction according to the Hack machine
  * language specification. The D and A in the language specification
  * refer to CPU-resident registers, while M refers to the external
- * memory location addressed by A, i.e. to Memory[A]. The inM input 
- * holds the value of this location. If the current instruction needs 
- * to write a value to M, the value is placed in outM, the address 
- * of the target location is placed in the addressM output, and the 
- * writeM control bit is asserted. (When writeM=0, any value may 
- * appear in outM). The outM and writeM outputs are combinational: 
- * they are affected instantaneously by the execution of the current 
- * instruction. The addressM and pc outputs are clocked: although they 
- * are affected by the execution of the current instruction, they commit 
- * to their new values only in the next time unit. If reset=1 then the 
- * CPU jumps to address 0 (i.e. sets pc=0 in next time unit) rather 
- * than to the address resulting from executing the current instruction. 
+ * memory location addressed by A, i.e. to Memory[A]. The inM input
+ * holds the value of this location. If the current instruction needs
+ * to write a value to M, the value is placed in outM, the address
+ * of the target location is placed in the addressM output, and the
+ * writeM control bit is asserted. (When writeM=0, any value may
+ * appear in outM). The outM and writeM outputs are combinational:
+ * they are affected instantaneously by the execution of the current
+ * instruction. The addressM and pc outputs are clocked: although they
+ * are affected by the execution of the current instruction, they commit
+ * to their new values only in the next time unit. If reset=1 then the
+ * CPU jumps to address 0 (i.e. sets pc=0 in next time unit) rather
+ * than to the address resulting from executing the current instruction.
  */
 
 CHIP CPU {
@@ -34,11 +34,50 @@ CHIP CPU {
                          // the current program (reset=0).
 
     OUT outM[16],        // M value output
-        writeM,          // Write into M? 
+        writeM,          // Write into M?
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
     PARTS:
-    // Implementation missing.
+    // Decode control bits from instruction
+      // load A-register
+      Not(in=instruction[15], out=not15);
+      Or(a=not15, b=instruction[5], out=ARegLoad);
+
+      // load D-register
+      And(a=instruction[15], b=instruction[4], out=DRegLoad);
+
+      // jump
+      And(a=isNegative, b=instruction[2], out=j1);
+      And(a=isZero, b=instruction[1], out=j2);
+
+      Or(a=isNegative, b=isZero, out=notPositive);
+      Not(in=notPositive, out=isPositive);
+      And(a=isPositive, b=instruction[0], out=j3);
+
+      Or(a=j1, b=j2, out=j12);
+      Or(a=j12, b=j3, out=jump);
+
+      And(a=jump, b=instruction[15], out=PCload);
+      Not(in=PCload, out=PCinc);
+
+      // write to M
+      And(a=instruction[15],b=instruction[3], out=writeM);
+
+    // choose between the ALU & instructions
+    Mux16(a=instruction, b=ALUout, sel=instruction[15], out=AInstructionIn);
+
+    // load appropriate instruction
+    ARegister(in=AInstructionIn, load=ARegLoad, out=ARegOut, out[0..14]=addressM);
+
+    // choose b/w A and M
+    Mux16(a=ARegOut, b=inM, sel=instruction[12], out=AMout);
+
+    // make sure D register used for A-instructions
+    DRegister(in=ALUout, load=DRegLoad, out=DRegOut);
+
+    ALU(x=DRegOut, y=AMout, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, out=outM, zr=isZero, ng=isNegative);
+
+    PC(in=ARegOut, load=PCload, inc=true, reset=reset, out[0..14]=pc);
 }
 
