@@ -1,27 +1,38 @@
 #!/usr/bin/ruby
 
+require 'Parser'
+
+
 # read each file and determine if it exists
 # if it does, open the file and create .hack file with same name
-ARGV.each do |file|
-  if File.exists?(file)
+if ARGV.length == 0
+  print "To actually use this assembler, try: ./assembler.rb <files to use>\n"
+
+else
+  ARGV.each do |file|
+
     # open file, notify user
-    print "Opening ", file
-    asm = File.open(file, "r")
+    print "Opening ", file, "\n"
 
-    # extract filename to change extension for output file
-    filename = File.basename(file,".asm")
-    filename = filename + ".hack"
 
-    folder_regex = Regexp.new(/\A[A-Za-z]*/)
-    folder_match = folder_regex.match(file)
-    folder= folder_match[0]
-    path = folder + "/" + filename
-     print "\nWill be writing to ", path, "\n"
+    # check extension of file to open, should be .asm
+    if File.extname(file) != ".asm"
+      # user doesn't understand what they're doing
+      print "\nWait! This isn't the right file.  Your extension is ", File.extname(file), " but it should be .asm.  This attempt is a complete failure!\n\n"
 
-    # open output file
-    hack = File.open(path,"w")
-    hack.print("Testing writing to file\n")
-    asm.close
-    hack.close
+
+    # test if file even exists
+    else if !File.exists?(file)
+      print "\nI pity the fool that uses ", file, " because it doesn't even exist.\n\n"
+
+
+    # otherwise begin parsing
+    else
+      parse = Parser.new(file)
+      parse.execute
+
+
+    end
   end
+end
 end
