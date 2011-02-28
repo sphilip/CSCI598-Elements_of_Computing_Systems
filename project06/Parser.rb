@@ -57,15 +57,15 @@ attr_accessor :table
     end
 
 #     test contents of table
-    @table.label.sort.each do |key, value|
-     print key, "\t", value ,"\n"
-    end
+#     @table.label.sort.each do |key, value|
+#      print key, "\t", value ,"\n"
+#     end
 
-    puts ""
-
-    @table.symbols.sort.each do |key, value|
-     print key, "\t", value ,"\n"
-    end
+#     puts ""
+# 
+#     @table.symbols.sort.each do |key, value|
+#      print key, "\t", value ,"\n"
+#     end
 
     puts "Assembly complete!\n"
 
@@ -77,7 +77,9 @@ attr_accessor :table
   # add symbols to the symbol table
   # input: string, int
   # output: string form of binary code
+   $symbols_address = 16
   def secondPass(cmd)
+   
     aCommand_regex = Regexp.new(/(\@)(\w*)/)
     aCommand_match = aCommand_regex.match(cmd)
 
@@ -92,8 +94,12 @@ attr_accessor :table
 	if !@table.contains(new_symbol)
 	  #print new_symbol, "\t", addr, "\n"
 
-	  # using the answer to everything as a dummy parameter
-	  @table.addEntry(new_symbol,42)
+	  # using the meaning of life as a dummy parameter
+	  @table.addEntry(new_symbol.strip,$symbols_address)
+	 
+	 # print "added ", new_symbol, " at ", $symbols_address, "\n"
+	   $symbols_address=$symbols_address+1
+	#else $symbols_address=$symbols_address-1
 	end
 	@hack.print("0", @table.getAddress(new_symbol), "\n")
       end

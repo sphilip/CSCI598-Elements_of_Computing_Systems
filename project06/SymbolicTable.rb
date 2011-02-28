@@ -35,13 +35,13 @@ class SymbolicTable
     @symbols_address = 16
     # also create table for labels
     @label = {}
-
   end
 
   # add (symbol, address) pair to the table.
   # input: string, int
   # output: bool (if addition of pair is successful)
   def addEntry (symbol, address)
+    #print "adding ", symbol, " at ", address, "\n"
     label_reg = Regexp.new(/\d/)
     label_match = label_reg.match(symbol)
 
@@ -50,10 +50,11 @@ class SymbolicTable
       @label[symbol.to_s] = [address]
 
     else
-      @symbols[label_match[0]] = [@symbols_address]
-      @symbols_address = @symbols_address+1
-
-      if @symbols_address > 24576
+      #@symbols[label_match[0]] = [@symbols_address]
+      #@symbols_address = @symbols_address+1
+      @symbols[label_match[0]] = [address]
+      #if @symbols_address > 24576
+      if address > 24576
 	puts "\n------------\nError: addressing memory greater than accessible memory space\n------------\n"
       end
     end
@@ -68,10 +69,23 @@ class SymbolicTable
     label_match = label_reg.match(symbol)
 
     # nil = no digits in symbol
+#     if label_match.nil?
+#       @label.has_key?(symbol)
+#     else
+#       @symbols.has_key?(symbol)
+#     end
     if label_match.nil?
-      @label.has_key?(symbol)
-    else
-      @symbols.has_key?(symbol)
+      #print "containing ", symbol, "\n"
+      if @symbols.has_key?(symbol.strip)
+	#print "symbols has key " ,symbol, "and val: ", @symbols[symbol.strip][0], "\n"
+	return true
+      elsif  @label.has_key?(symbol.strip)
+	#print "labels has key ", symbol, "and val: ", @symbols[symbol.strip][0],"\n"
+	return true
+      end
+    else 
+      #print "containing ", symbol, "\n"
+      return true
     end
   end
 
@@ -87,7 +101,7 @@ class SymbolicTable
   # input: string for symbol
   # output: string representing the binary code for symbol
   def getAddress (symbol)
-
+    #print symbol, "\t"
     #print "entered with ", symbol, "\n"
     label_reg = Regexp.new(/\d/)
     label_match = label_reg.match(symbol)
@@ -95,13 +109,21 @@ class SymbolicTable
     # nil = no digits in symbol
     if label_match.nil?
       if @label.has_key?(symbol)
-	zero_pad(@label[symbol][0].to_i.to_s(2))
+	val = zero_pad(@label[symbol][0].to_i.to_s(2))
+	#print "in label: ", val, "\n"
+	
       elsif @symbols.has_key?(symbol)
-	zero_pad(@symbols[symbol][0].to_i.to_s(2))
+	val = zero_pad(@symbols[symbol][0].to_i.to_s(2))
+	#print "in symbosl: ", val, "\n"
+	
       end
     else
-      zero_pad(symbol.to_i.to_s(2))
+      val = zero_pad(symbol.to_i.to_s(2))
+      #print "just converted #: ", val, "\n"
+	
     end
+    
+    #print symbol, "\t\t", val, "\n"
   end
 
 
