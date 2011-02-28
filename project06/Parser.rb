@@ -1,23 +1,24 @@
 require 'SymbolicTable'
+require 'Code'
 
 # split up asm command into field & symbols
 class Parser
 attr_accessor :table
   # take input file and open it
   def initialize(file)
-      # extract filename to change extension for output file
-      @asm = File.open(file, "r")
-      filename = File.basename(file,".asm")
-      filename = filename + ".win.hack"
+    # extract filename to change extension for output file
+    @asm = File.open(file, "r")
+    filename = File.basename(file,".asm")
+    filename = filename + ".win.hack"
 
 
-      # pull the directory that the file was taken from
-      folder= File.dirname(file)
-      path = folder + "/" + filename
-      print "Will be writing to ", path, "\n\n"
+    # pull the directory that the file was taken from
+    folder= File.dirname(file)
+    path = folder + "/" + filename
+    print "Will be writing to ", path, "\n\n"
 
-      # open output file
-      @hack = File.open(path,"w")
+    # open output file
+    @hack = File.open(path,"w")
 
   end
 
@@ -27,11 +28,14 @@ attr_accessor :table
     # create new hash table
     @table = SymbolicTable.new
 
+    # instantiate the list of mnemonics
+    @code = Code.new
+
     # read all lines from file
     lines = @asm.readlines
     line_num = 0
 
-    # parse each line, perform first pass on the file`
+    # first pass through file, parse for labels
     lines.each do |line|
       # remove extraneous characters
       line = line.strip
@@ -43,47 +47,99 @@ attr_accessor :table
       end
     end
 
+    # second pass through file, find A-instructions (cmds w/@ that are not labels)
     line_num = 0
     lines.each do |line|
       newline = find_command(line)
       if !newline.nil? && newline.size > 0
-	secondPass(line, line_num)
-	line_num = line_num+1
+	secondPass(newline)
       end
     end
 
-    # test contents of table
-    @table.label.each do |key, value|
+#     test contents of table
+    @table.label.sort.each do |key, value|
      print key, "\t", value ,"\n"
     end
+
+    puts ""
+
+    @table.symbols.sort.each do |key, value|
+     print key, "\t", value ,"\n"
+    end
+
+    puts "Assembly complete!\n"
 
     @asm.close
     @hack.close
   end
 
+
   # add symbols to the symbol table
   # input: string, int
-  # output: ???
-  def secondPass(cmd, addr)
+  # output: string form of binary code
+  def secondPass(cmd)
     aCommand_regex = Regexp.new(/(\@)(\w*)/)
     aCommand_match = aCommand_regex.match(cmd)
 
     if !aCommand_match.nil?
       cmd = aCommand_match[0].to_s
+
+      # if cmd is indeed an a-instruction, it should have @ as the 1st character
       if cmd[0].chr == "@"
-	addr = addr-1
 	new_symbol = cmd[1..cmd.size-1]
+
+	# add symbol to table if it doesn't have it already
 	if !@table.contains(new_symbol)
 	  #print new_symbol, "\t", addr, "\n"
-	  @table.addEntry(new_symbol,addr)
+
+	  # using the answer to everything as a dummy parameter
+	  @table.addEntry(new_symbol,42)
 	end
-	#puts cmd
-      #[1...cmd.size-1], "\n"
-    #else
-     # print "1st char: ", cmd[0].chr, "\n"
+	@hack.print("0", @table.getAddress(new_symbol), "\n")
+      end
+      else
+	parseCInstruction(cmd)
+    end
+  end
+
+
+
+  # parse the C Instruction
+  # input: string
+  # output: ???
+  def parseCInstruction(c)
+
+    sym = c.strip
+    dest = "000"
+    comp = "000000"
+    jump = "000"
+
+    if !sym.nil?
+      if !sym.empty?
+	c_regex = Regexp.new(/\;|\=/)
+	c_match = c_regex.match(sym)
+
+	if !c_match.nil?
+	  if c_match[0] == "="
+ #print "for =, have ", c_match.pre_match, " and ", c_match.post_match, "\n"
+	    dest = @code.dest(c_match.pre_match)
+	    comp = @code.comp(c_match.post_match)
+	  end
+
+	  if c_match[0] == ";"
+	    #print "for ;, have ", c_match.pre_match, " and ", c_match.post_match, "\n"
+	    comp = @code.comp(c_match.pre_match)
+	    jump = @code.jump(c_match.post_match)
+	  end
+
+	  @hack.print("111", comp, dest, jump, "\n")
+	end
       end
     end
   end
+
+
+
 
   # add each label to the labels table
   # input: string, int
@@ -92,10 +148,7 @@ attr_accessor :table
     if cmd.size > 0
       # checking if line is a label
       if cmd[0].chr == "("
-	#addr = addr+1
 	new_label = cmd[1...cmd.size-1]
-	#addr = addr-1
-	#print new_label, "\t", addr, "\n"
 	if !@table.contains(new_label)#,"label")
 	  @table.addEntry(new_label,addr)
 	  addr = addr
@@ -123,6 +176,8 @@ attr_accessor :table
       line
     end
   end
+
+
 
   # if done w/files, close them
   def closeFiles

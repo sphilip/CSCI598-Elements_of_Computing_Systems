@@ -11,10 +11,6 @@ if ARGV.length == 0
 else
   ARGV.each do |file|
 
-    # open file, notify user
-    print "Opening ", file, "\n"
-
-
     # check extension of file to open, should be .asm
     if File.extname(file) != ".asm"
       # user doesn't understand what they're doing
@@ -28,9 +24,10 @@ else
 
     # otherwise begin parsing
     else
+       # open file, notify user
+      print "Opening ", file, "\n"
       parse = Parser.new(file)
       parse.execute
-
 
     end
   end

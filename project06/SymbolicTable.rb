@@ -41,61 +41,66 @@ class SymbolicTable
   # add (symbol, address) pair to the table.
   # input: string, int
   # output: bool (if addition of pair is successful)
-  def addEntry (symbol, address)#, type)
-    # all caps = labels
-    # all or most small letters = symbol/ variables
-    #label_reg = Regexp.new(/[A-Z]*/)
-    #label_match = label_reg.match(symbol)
-
+  def addEntry (symbol, address)
     label_reg = Regexp.new(/\d/)
     label_match = label_reg.match(symbol)
 
     # nil = no digits in symbol, add to labels table
     if label_match.nil?
       @label[symbol.to_s] = [address]
+
     else
       @symbols[label_match[0]] = [@symbols_address]
       @symbols_address = @symbols_address+1
+
       if @symbols_address > 24576
 	puts "\n------------\nError: addressing memory greater than accessible memory space\n------------\n"
       end
     end
-#     if type == "label"
-#       @label[symbol.to_s] = [address]
-#     else
-#       @symbols[symbol.to_s] = [address]
-#     end
 
   end
 
   # does the symbol table have the provided symbol?
   # input: string for desired symbol, string for desired table
   # output: bool
-  def contains (symbol)#, table)
+  def contains (symbol)
     label_reg = Regexp.new(/\d/)
     label_match = label_reg.match(symbol)
 
-    # nil = no digits in symbol, symbol is a label
+    # nil = no digits in symbol
     if label_match.nil?
       @label.has_key?(symbol)
     else
       @symbols.has_key?(symbol)
     end
-#     if table == "symbols"
-#       @symbols.has_key?(symbol)
-#     else
-#       @label.has_key?(symbol)
-#     end
   end
 
+
+  # shamelessly stolen from Andy Niccolai's gist
+  def zero_pad(input_string)
+    pad_length = 15 - input_string.length
+    "0" * pad_length + input_string
+  end
+
+
   # return the address associated w/symbol
-  # input: string for symbol, string for table
-  # output: int
-  def getAddress (symbol, table)
-    if table == "label"
-      @label[symbol]
+  # input: string for symbol
+  # output: string representing the binary code for symbol
+  def getAddress (symbol)
+
+    #print "entered with ", symbol, "\n"
+    label_reg = Regexp.new(/\d/)
+    label_match = label_reg.match(symbol)
+
+    # nil = no digits in symbol
+    if label_match.nil?
+      if @label.has_key?(symbol)
+	zero_pad(@label[symbol][0].to_i.to_s(2))
+      elsif @symbols.has_key?(symbol)
+	zero_pad(@symbols[symbol][0].to_i.to_s(2))
+      end
     else
-      @symbols[symbol]
+      zero_pad(symbol.to_i.to_s(2))
     end
   end
 
