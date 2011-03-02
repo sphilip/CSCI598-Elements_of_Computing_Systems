@@ -6,7 +6,7 @@ class CodeWriter
   # inform code writer that translation of new VM file is started
   # input: string (file name)
   # output: none
-  def  setFileName
+  def  setFileName(path)
   end
   
   # write assembly code 

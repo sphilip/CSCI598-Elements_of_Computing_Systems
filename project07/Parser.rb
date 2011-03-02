@@ -20,20 +20,18 @@ class Parser
       Dir.chdir(input)
       files = Dir.glob("*.vm")
       
+      filename = ""
       files.each do |file|
 	@vmFile = File.new(file,"r")
 	filename = File.basename(file,".vm")
 	filename = filename + ".win.asm"
-
-	
-	# create path to write file
-	#folder = File.dirname(file)
-	path = Dir.pwd + "/" + filename
-	print "Will be writing to ", input, filename, "\n\n"
-
-	# open output file
-	@vm = File.open(path,"w")
       end
+      # create path to write file
+      path = Dir.pwd + "/" + filename
+      print "Will be writing to ", input, filename, "\n\n"
+
+      # open output file
+      @vm = File.open(path,"w")
       
       
     # it's a file!
