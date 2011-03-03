@@ -3,6 +3,8 @@
 # 	access to VM commands & their components
 # also removes white space & comments
 
+require 'CodeWriter'
+
 class Parser
   # Opens inputs file
   # input: input file
@@ -28,7 +30,7 @@ class Parser
 	
 	vmFile = File.new(file,"r")
 	filename = File.basename(file,".vm")
-	filename = filename + ".win.asm"
+	filename = filename + ".asm"
 	@fileList[i] = vmFile
 	i=i+1
       end
@@ -50,7 +52,7 @@ class Parser
       # Open file & pull the name of file to give the output the same file name
       @file = File.new(input,"r")
       filename = File.basename(input,".vm")
-      filename = filename + ".win.asm"
+      filename = filename + ".asm"
 
       # pull the directory
       folder= File.dirname(input)
@@ -68,16 +70,27 @@ class Parser
   end
   
   def readFile(file)
-    #inputFile = File.new(file)
+    code = CodeWriter.new
     lines = file.readlines
     lines.each do |line|
-      
+      # remove all comments
       line = line.gsub(/\/{2}.*/, '')
+      
+      # split each line on whitespace
       commands = line.split
-          
+      if !commands.empty?
+      type = commandType(commands[0])
+	
+	if type == "C_PUSH" or type == "C_POP"
+	  @vm.print code.writePushPop(type,commands[1], commands[2])
+	  
+	else
+	 @vm.print code.writeArithmetic(commands[0])
+	end
+      end
     end
-    
   end
+	  
   
   
   # returns type of current VM command
@@ -85,7 +98,14 @@ class Parser
   # input: none
   # output: C_ARITHMETIC, C_PUSH, C_POP, C_LABEL, C_GOTO, 
   # 		C_IF, C_FUNCTION, C_RETURN, C_CALL
-  def commandType
+  def commandType(command)
+    if command.downcase == "push"
+      return "C_PUSH"
+    elsif command.downcase == "pop"
+      return "C_POP"
+    else 
+      return "C_ARITHMETIC"
+    end
   end
   
   # return 1st argument of current commands
