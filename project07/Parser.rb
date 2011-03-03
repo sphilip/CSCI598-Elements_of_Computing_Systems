@@ -7,6 +7,7 @@ class Parser
   # Opens inputs file
   # input: input file
   # output: none
+
   def initialize(input)
     # check if given input is a directory
     if File.directory?(input)
@@ -21,11 +22,17 @@ class Parser
       files = Dir.glob("*.vm")
       
       filename = ""
+      i = 0
+      @fileList = Array.new(files.length)
       files.each do |file|
-	@vmFile = File.new(file,"r")
+	
+	vmFile = File.new(file,"r")
 	filename = File.basename(file,".vm")
 	filename = filename + ".win.asm"
+	@fileList[i] = vmFile
+	i=i+1
       end
+      
       # create path to write file
       path = Dir.pwd + "/" + filename
       print "Will be writing to ", input, filename, "\n\n"
@@ -33,6 +40,9 @@ class Parser
       # open output file
       @vm = File.open(path,"w")
       
+      @fileList.each do |file|
+	readFile(file)
+      end
       
     # it's a file!
     elsif File.file?(input)
@@ -50,10 +60,23 @@ class Parser
       # open output file
       @vm = File.open(path,"w")
 
+      readFile(file)
       
     # maybe the user inputted something wrong?
     else print input, " is not found.  Does it even exist?\n"
     end    
+  end
+  
+  def readFile(file)
+    #inputFile = File.new(file)
+    lines = file.readlines
+    lines.each do |line|
+      
+      line = line.gsub(/\/{2}.*/, '')
+      commands = line.split
+          
+    end
+    
   end
   
   

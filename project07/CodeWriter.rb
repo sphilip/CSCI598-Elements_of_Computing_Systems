@@ -1,4 +1,6 @@
+# tranlsation VM commands into Hack assembly code
 class CodeWriter
+  
   # open output file
   def initialize
   end
