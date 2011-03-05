@@ -1,17 +1,17 @@
 #!/usr/bin/ruby
 
 require 'Parser'
-require 'CodeWriter'
 
-ARGV.each do |param|
-  param = param.strip
-  
-  # seems like user knows what's going on
-  if param.size > 0
+# if any parameters are specified, begin translation
+if !ARGV.empty?
+  ARGV.each do |param|
+    param = param.strip
+
+    # seems like user knows what's going on
     parse = Parser.new(param)
-    
-  # user is completely clueless
-  else
-    print "Nothing specified.\nUsage: ./TranslatorDriver <files or directories>\n\n"
   end
+
+# user is an abject moron.  The only prescription is more cowbell
+else
+  print "Nothing specified.\nUsage: ./TranslatorDriver <file or directories>\n\n"
 end
