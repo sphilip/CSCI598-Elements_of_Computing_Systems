@@ -12,16 +12,15 @@ class Parser
 
   def initialize(input)
     # check if given input is a directory
+
     if File.directory?(input)
 
       # it's a directory!
-      dir = Dir.open(input)
-      workingDirectory = Dir.pwd
-      path = workingDirectory + "/" + input
-
       # go to that directory & get all .vm files
-      Dir.chdir(input)
-      files = Dir.glob("*.vm")
+      if input[input.size-1].chr != "/"
+	input = input + "/"
+      end
+      files = Dir.glob("#{input}*.vm")
 
       filename = ""
       i = 0
@@ -36,18 +35,20 @@ class Parser
       end
 
       # create path to write file
-      path = Dir.pwd + "/" + filename
+      path = Dir.pwd + "/" + input + filename
       print "Will be writing to ", input, filename, "\n\n"
 
       # open output file
-      @vm = File.open(path,"w")
+      #@vm = File.open(path,"w")
+      @code = CodeWriter.new(path)
 
       @fileList.each do |file|
 	readFile(file)
 	file.close
       end
 
-    @vm.close
+      @code.close
+
 
     # it's a file!
     elsif File.file?(input)
@@ -63,11 +64,11 @@ class Parser
       print "Will be writing to ", path, "\n\n"
 
       # open output file
-      @vm = File.open(path,"w")
+       @code = CodeWriter.new
 
-      readFile(@file)
-      @file.close
-      @vm.close
+      readFile(file)
+      file.close
+      @code.close
 
     # maybe the user inputted something wrong?
 
@@ -76,7 +77,7 @@ class Parser
   end
 
   def readFile(file)
-    code = CodeWriter.new
+
     lines = file.readlines
     lines.each do |line|
       # remove all comments
@@ -88,10 +89,10 @@ class Parser
       type = commandType(commands[0])
 
 	if type == "C_PUSH" or type == "C_POP"
-	  @vm.print code.writePushPop(type,commands[1], commands[2])
+	  @code.writePushPop(commands[0],commands[1], commands[2])
 
 	else
-	 @vm.print code.writeArithmetic(commands[0])
+	 @code.writeArithmetic(commands[0])
 	end
       end
     end
