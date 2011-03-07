@@ -1,0 +1,20 @@
+// pop value on stack to THIS [<%= index %>]
+@SP
+M=M-1
+A=M
+D=M
+@13
+M=A
+M=D // popped value off & storing @ temp (not TEMP)
+@THIS
+D=M
+@<%= index %>
+D=D+A // go to local[<%= index %>]
+@14
+M=D // store new index in temp
+@13 // get temp and store in local
+D=M
+@14
+A=M
+M=D
+
