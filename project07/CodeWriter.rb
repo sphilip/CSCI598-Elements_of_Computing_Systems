@@ -18,14 +18,16 @@ $label_index=0
       "push that" => "./templates/push-that.erb",
       "push temp" => "./templates/push-temp.erb",
       "push pointer" => "./templates/push-pointer.erb",
-     
+      "push static" => "./templates/push-static.erb",
+      
       "pop constant" => "./templates/pop-constant.erb",
       "pop local" => "./templates/pop-lcl.erb",
       "pop argument" => "./templates/pop-arg.erb",
       "pop this" => "./templates/pop-this.erb",
       "pop that" => "./templates/pop-that.erb",
       "pop temp" => "./templates/pop-temp.erb",
-      "pop pointer" => "./templates/pop-pointer.erb"     
+      "pop pointer" => "./templates/pop-pointer.erb",     
+      "pop static" => "./templates/pop-static.erb"
     }
 
     @arith_hash = {

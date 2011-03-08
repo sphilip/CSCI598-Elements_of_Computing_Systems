@@ -1,0 +1,16 @@
+//push static <%=  index %>
+@16
+D=M
+@<%= index %>
+D=A+D // static[<%= index %>]
+A=D
+D=M
+@13
+M=D // store data @ temp (not TEMP segment)
+@SP
+A=M
+M=D // put data @ stack
+@SP
+M=M+1 //update stack ptr
+
+
