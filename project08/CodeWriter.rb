@@ -116,11 +116,17 @@ $label_index=0
   # write assembly code return command
   # input: none
   def writeReturn
+
   end
 
   # write assembly code for function command
   # input: string( function name), int ( number of lcls)
   def writeFunction(functionName, numLcl)
+    numLcl= numLcl.to_i
+    File.open("./templates/func.erb", 'r') do |infile|
+      erb = ERB.new(infile.read)
+      @output.write erb.result(binding)
+    end
   end
 
 
