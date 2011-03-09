@@ -19,14 +19,14 @@ $label_index=0
       "push temp" => "./templates/push-temp.erb",
       "push pointer" => "./templates/push-pointer.erb",
       "push static" => "./templates/push-static.erb",
-      
+
       "pop constant" => "./templates/pop-constant.erb",
       "pop local" => "./templates/pop-lcl.erb",
       "pop argument" => "./templates/pop-arg.erb",
       "pop this" => "./templates/pop-this.erb",
       "pop that" => "./templates/pop-that.erb",
       "pop temp" => "./templates/pop-temp.erb",
-      "pop pointer" => "./templates/pop-pointer.erb",     
+      "pop pointer" => "./templates/pop-pointer.erb",
       "pop static" => "./templates/pop-static.erb"
     }
 
@@ -39,7 +39,7 @@ $label_index=0
       "and" => "./templates/and.erb",
       "or" => "./templates/or.erb"
     }
-    
+
   end
 
   # inform code writer that translation of new VM file is started
@@ -55,7 +55,7 @@ $label_index=0
   def writeArithmetic(command)
 
     if @arith_hash.has_key?(command) then
-   
+
       File.open(@arith_hash[command],'r') do |infile|
 	erb = ERB.new(infile.read)
 	@output.write erb.result(binding)
@@ -73,7 +73,7 @@ $label_index=0
   # input: command (C_PUSH/C_POP), string (segment), int (index)
   # output: none
   def writePushPop(command,segment,index)
-    
+
     key = command + " " + segment
     if @segment_hash.has_key?(key)
 
@@ -92,13 +92,13 @@ $label_index=0
   def writeLabel(label)
    @output.print "(#{label})\n\n"
   end
-  
+
   # writes assembly code for goto command
   # input: string
   def writeGoto(label)
-    @output.print "@#{label}\n0;JEQ"
+    @output.print "@#{label}\n0;JEQ\n\n"
   end
-  
+
   # write assembly code for if-goto command
   # input: string
   def writeIf(label)
@@ -107,29 +107,29 @@ $label_index=0
       @output.write erb.result(binding)
      end
   end
-  
+
   #write assembly code for call command
   # input: string (function name), int (number of args)
   def writeCall(functionName, numArgs)
   end
-  
+
   # write assembly code return command
   # input: none
   def writeReturn
   end
-  
+
   # write assembly code for function command
   # input: string( function name), int ( number of lcls)
   def writeFunction(functionName, numLcl)
   end
-  
-  
-  
+
+
+
   # close output file
   def close
     @output.close
   end
-  
-  
-  
+
+
+
 end
