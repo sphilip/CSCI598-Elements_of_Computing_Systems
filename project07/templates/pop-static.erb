@@ -6,13 +6,13 @@ D=M
 @13
 M=A
 M=D // popped value off & storing @ temp (not TEMP)
-@16
+@<%= @base %>.<%= index %> //@16
 D=M
 @<%= index %>
-D=D+A // go to THIS[<%= index %>]
+D=D+A // go to static[<%= index %>]
 @14
 M=D // store new index in temp
-@13 // get temp and store in local
+@13 // get temp and store in static[<%= index %>]
 D=M
 @14
 A=M

@@ -3,13 +3,13 @@ require 'erb'
 # tranlsation VM commands into Hack assembly code
 class CodeWriter
 $label_index=0
-
+@base = ""
 
   # open output file
   def initialize(path)
 
     @output = File.open(path,"w")
-
+    @base = File.basename(path, ".asm")
     @segment_hash = {
       "push constant" => "./templates/push-constant.erb",
       "push local" => "./templates/push-lcl.erb",
@@ -19,14 +19,14 @@ $label_index=0
       "push temp" => "./templates/push-temp.erb",
       "push pointer" => "./templates/push-pointer.erb",
       "push static" => "./templates/push-static.erb",
-      
+
       "pop constant" => "./templates/pop-constant.erb",
       "pop local" => "./templates/pop-lcl.erb",
       "pop argument" => "./templates/pop-arg.erb",
       "pop this" => "./templates/pop-this.erb",
       "pop that" => "./templates/pop-that.erb",
       "pop temp" => "./templates/pop-temp.erb",
-      "pop pointer" => "./templates/pop-pointer.erb",     
+      "pop pointer" => "./templates/pop-pointer.erb",
       "pop static" => "./templates/pop-static.erb"
     }
 
@@ -39,7 +39,7 @@ $label_index=0
       "and" => "./templates/and.erb",
       "or" => "./templates/or.erb"
     }
-    
+
   end
 
   # inform code writer that translation of new VM file is started
@@ -55,7 +55,7 @@ $label_index=0
   def writeArithmetic(command)
 
     if @arith_hash.has_key?(command) then
-   
+
       File.open(@arith_hash[command],'r') do |infile|
 	erb = ERB.new(infile.read)
 	@output.write erb.result(binding)
@@ -73,7 +73,7 @@ $label_index=0
   # input: command (C_PUSH/C_POP), string (segment), int (index)
   # output: none
   def writePushPop(command,segment,index)
-    
+
     key = command + " " + segment
     if @segment_hash.has_key?(key)
 
@@ -91,7 +91,7 @@ $label_index=0
   def close
     @output.close
   end
-  
-  
-  
+
+
+
 end
