@@ -9,7 +9,7 @@ $label_index=0
   def initialize(path)
 
     @output = File.open(path,"w")
-
+    @base = File.basename(path, ".asm")
     @segment_hash = {
       "push constant" => "./templates/push-constant.erb",
       "push local" => "./templates/push-lcl.erb",
@@ -37,9 +37,12 @@ $label_index=0
       "lt" => "./templates/lt.erb",
       "gt" => "./templates/gt.erb",
       "and" => "./templates/and.erb",
-      "or" => "./templates/or.erb"
+      "or" => "./templates/or.erb",
+      "not" => "./templates/not.erb",
+      "neg" => "./templates/neg.erb"
     }
 
+    @current_function_name = "MAIN"
   end
 
   # inform code writer that translation of new VM file is started
@@ -59,7 +62,7 @@ $label_index=0
       File.open(@arith_hash[command],'r') do |infile|
 	erb = ERB.new(infile.read)
 	@output.write erb.result(binding)
-
+	$label_index=$label_index+1
       end
 
     else puts "#{command} not supported. \n\n"
@@ -90,13 +93,13 @@ $label_index=0
   # write assembly code for label command
   # input: string
   def writeLabel(label)
-   @output.print "(#{label})\n\n"
+   @output.print "(#{@current_function_name}$#{label})\n\n"
   end
 
   # writes assembly code for goto command
   # input: string
   def writeGoto(label)
-    @output.print "@#{label}\n0;JEQ\n\n"
+    @output.print "@#{@current_function_name}$#{label}\n0;JEQ\n\n"
   end
 
   # write assembly code for if-goto command
@@ -111,17 +114,25 @@ $label_index=0
   #write assembly code for call command
   # input: string (function name), int (number of args)
   def writeCall(functionName, numArgs)
+    File.open("./templates/call.erb", 'r') do |infile|
+      erb = ERB.new(infile.read)
+      @output.write erb.result(binding)
+    end
   end
 
   # write assembly code return command
   # input: none
   def writeReturn
-
+    File.open("./templates/return.erb", 'r') do |infile|
+      erb = ERB.new(infile.read)
+      @output.write erb.result(binding)
+    end
   end
 
   # write assembly code for function command
   # input: string( function name), int ( number of lcls)
   def writeFunction(functionName, numLcl)
+    @current_function_name = functionName
     numLcl= numLcl.to_i
     File.open("./templates/func.erb", 'r') do |infile|
       erb = ERB.new(infile.read)
@@ -135,7 +146,5 @@ $label_index=0
   def close
     @output.close
   end
-
-
 
 end

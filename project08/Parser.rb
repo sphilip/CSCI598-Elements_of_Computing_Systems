@@ -106,6 +106,10 @@ class Parser
 	  @code.writeIf(commands[1])
 	elsif type == "C_FUNCTION"
 	  @code.writeFunction(commands[1], commands[2])
+	elsif type == "C_RETURN"
+	  @code.writeReturn
+	elsif type == "C_CALL"
+	  @code.writeCall(commands[1], commands[2])
 	else
 	 @code.writeArithmetic(commands[0])
 	end
@@ -119,8 +123,7 @@ class Parser
   # returns type of current VM command
   # use C_ARITHMETIC for all arithmetic commands
   # input: none
-  # output: C_ARITHMETIC, C_PUSH, C_POP, C_LABEL, C_GOTO,BasicLoop.tstBasicLoop.tst
-  # 		C_IF, C_FUNCTION, C_RETURN, C_CALL
+  # output: C_ARITHMETIC, C_PUSH, C_POP, C_LABEL, C_GOTO, C_IF, C_FUNCTION, C_RETURN, C_CALL
   def commandType(command)
 
     if command.downcase == "push"
@@ -143,6 +146,10 @@ class Parser
 
     elsif command.downcase == "return"
       return "C_RETURN"
+
+    elsif command.downcase == "call"
+      return "C_CALL"
+
     else
       return "C_ARITHMETIC"
     end

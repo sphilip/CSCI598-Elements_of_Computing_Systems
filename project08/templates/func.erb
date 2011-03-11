@@ -2,9 +2,16 @@
 (<%= functionName %>)
 <% for i in 0...numLcl %>
 @LCL // initializing <%= i+1 %> of <%= numLcl %> variable
-D=A
-@<%= i %> <% if i == 0 then %> // actual index starts at 0 <% end %>
-A=D+A
 A=M
 M=0
+@LCL
+M=M+1
 <% end %>
+@<%= numLcl %> // restore original lcl base address
+D=A
+@LCL
+A=M
+D=A-D
+@LCL
+M=D // memory location restored
+
