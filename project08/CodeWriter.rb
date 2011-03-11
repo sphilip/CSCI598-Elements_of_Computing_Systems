@@ -93,7 +93,11 @@ $label_index=0
   # write assembly code for label command
   # input: string
   def writeLabel(label)
-   @output.print "(#{@current_function_name}$#{label})\n0;JEQ\n\n"
+    if label.downcase.split("end").length > 1 then
+      @output.print "(#{@current_function_name}$#{label})\n0;JEQ\n\n"
+    else
+      @output.print "(#{@current_function_name}$#{label})\n\n"
+    end
   end
 
   # writes assembly code for goto command
