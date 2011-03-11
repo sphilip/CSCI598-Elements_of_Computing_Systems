@@ -37,7 +37,8 @@ $label_index=0
       "lt" => "./templates/lt.erb",
       "gt" => "./templates/gt.erb",
       "and" => "./templates/and.erb",
-      "or" => "./templates/or.erb"
+      "or" => "./templates/or.erb",
+      "neg" => "./templates/neg.erb"
     }
 
   end
@@ -60,6 +61,7 @@ $label_index=0
 	erb = ERB.new(infile.read)
 	@output.write erb.result(binding)
 
+        $label_index=$label_index+1
       end
 
     else puts "#{command} not supported. \n\n"
