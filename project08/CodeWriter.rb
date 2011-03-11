@@ -93,7 +93,7 @@ $label_index=0
   # write assembly code for label command
   # input: string
   def writeLabel(label)
-   @output.print "(#{@current_function_name}$#{label})\n\n"
+   @output.print "(#{@current_function_name}$#{label})\n0;JEQ\n\n"
   end
 
   # writes assembly code for goto command
