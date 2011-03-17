@@ -1,0 +1,70 @@
+// return from <%= @current_function_name %>???
+// temporarily store lcl
+@LCL
+A=M
+D=A
+@frame
+M=D
+// put return address in a temp (ret = *(frame-5))
+@5
+D=D-A
+A=D
+A=M
+D=M
+@ret
+//A=M
+M=D
+// reposition return value for caller (*ARG = pop())
+@SP
+M=M-1
+A=M
+D=M
+@ARG
+A=M
+M=D  // ARG popped
+
+// restore stack ptr of caller (SP = ARG+1)
+@ARG
+A=M
+D=A
+@SP
+M=D+1  // restored stack ptr
+// restore THAT of caller (THAT = *(FRAME-1))
+@frame
+D=M
+@1
+D=D-A
+A=D
+AD=M
+@THAT
+M=D // THAT restored
+// restore THIS of caller (THIS = *(FRAME-2))
+@frame
+D=M
+@2
+D=D-A
+A=D
+AD=M
+@THIS
+M=D // THIS restored
+// restore ARG of caller (ARG = *(FRAME-3))
+@frame
+D=M
+@3
+D=D-A
+A=D
+AD=M
+@ARG
+M=D // ARG restored
+// restore LCL of claller (THIS = *(FRAME-4))
+@frame
+D=M
+@4
+D=D-A
+A=D
+AD=M
+@LCL
+M=D // LCL restored
+@ret // go to return address
+A=M
+
