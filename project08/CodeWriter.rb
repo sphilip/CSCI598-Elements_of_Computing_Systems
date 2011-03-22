@@ -4,12 +4,12 @@ require 'erb'
 class CodeWriter
 $label_index=0
 
-
   # open output file
   def initialize(path)
 
     @output = File.open(path,"w")
     @base = File.basename(path, ".asm")
+    
     @segment_hash = {
       "push constant" => "./templates/push-constant.erb",
       "push local" => "./templates/push-lcl.erb",
@@ -43,6 +43,16 @@ $label_index=0
     }
 
     @current_function_name = "MAIN"
+    
+    @output.print "//bootstrap code
+@256 
+D=A
+@0 // set SP to 256
+M=D
+
+@Sys.init
+0;JEQ\n\n"
+    
   end
 
   # inform code writer that translation of new VM file is started
@@ -149,6 +159,8 @@ $label_index=0
   # close output file
   def close
     @output.close
+    
+    print "\nTranslation succeeded!\n\n"
   end
 
 end

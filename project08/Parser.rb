@@ -17,40 +17,53 @@ class Parser
 
       # it's a directory!
       # go to that directory & get all .vm files
-      if input[input.size-1].chr != "/"
+      if input[input.size-1].chr != "/" then
 	input = input + "/"
       end
 
+ 
       # get all vm files from that foler
       files = Dir.glob("#{input}*.vm")
-
-      filename = ""
-
-      # count the # of vm files in this folder
-      file_count = 0
-      fileList = Array.new(files.length)
-
-      # for each vm file
-      files.each do |file|
-
-	vmFile = File.new(file,"r")
-	filename = File.basename(file,".vm")
-	filename = filename + ".asm"
-	fileList[file_count] = vmFile
-	file_count=file_count+1
-      end
-
-      # create path to write file
-      path = Dir.pwd + "/" + input + filename
-      print "Will be writing to #{input}#{filename}\n\n"
+#       filename = ""
+     
+     output_filename= input.gsub(/^(\w)*/,"")
+     output_filename= output_filename[1,output_filename.size-2] + ".asm"
+  
+       # create path to write file
+      path = Dir.pwd + "/" + input + output_filename
+      print "Will be writing to #{input}#{output_filename}\n\n"
 
       # open output file
       @code = CodeWriter.new(path)
-
-      fileList.each do |file|
-	readFile(file)
-	file.close
+      
+      files.each do |file|
+	print "Reading from #{file}\n"
+	inputFile = File.new(file,"r")
+	readFile(inputFile)
+	inputFile.close
       end
+      
+      # count the # of vm files in this folder
+#       file_count = 0
+#       fileList = Array.new(files.length)
+
+#       # for each vm file
+#       files.each do |file|
+# 
+# 	vmFile = File.new(file,"r")
+# 	#filename = File.basename(file,".vm")
+# 	#filename = filename + ".asm"
+# 	fileList[file_count] = vmFile
+# 	file_count=file_count+1
+#       end
+#    
+#       fileList.each do |file|
+# 	print "Reading from #{file}\n"
+# 	readFile(file)
+# 	file.close
+#       end
+
+      
 
       @code.close
 
@@ -58,23 +71,27 @@ class Parser
     # it's a file!
     elsif File.file?(input)
 
-      # Open file & pull the name of file to give the output the same file name
-      file = File.new(input,"r")
-      filename = File.basename(input,".vm")
-      filename = filename + ".asm"
+      if !File.extname(input) != ".vm"
+	puts "#{File.basename(input)} is not a valid file\n\n"
+	
+      else
+	# Open file & pull the name of file to give the output the same file name
+	file = File.new(input,"r")
+	filename = File.basename(input,".vm")
+	filename = filename + ".asm"
 
-      # pull the directory
-      folder= File.dirname(input)
-      path = folder + "/" + filename
-      print "Will be writing to #{File.dirname(input)}/#{filename}\n\n"
+	# pull the directory
+	folder= File.dirname(input)
+	path = folder + "/" + filename
+	print "Will be writing to #{File.dirname(input)}/#{filename}\n\n"
 
-      # open output file
-      @code = CodeWriter.new(path)
+	# open output file
+	@code = CodeWriter.new(path)
 
-      readFile(file)
-      file.close
-      @code.close
-
+	readFile(file)
+	file.close
+	@code.close
+      end
     # maybe the user inputted something wrong?
     else puts "#{input} is not found.  Does it even exist?\n"
     end
