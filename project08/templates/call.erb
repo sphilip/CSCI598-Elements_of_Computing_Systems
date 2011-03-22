@@ -1,0 +1,60 @@
+// call <%= functionName %> <%= numArgs %>
+@<%= functionName %>$return //push return address
+D=A
+@SP
+A=M
+M=D
+@SP
+M=M+1 // return address pushed
+//push lcl
+@LCL 
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1 // pushed lcl
+// push arg
+@ARG
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1 // pushed arg
+// push this
+@THIS
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1 // pushed this
+// push that
+@THAT 
+D=M
+@SP
+A=M
+M=D
+@SP
+M=M+1 // pushed that
+// arg = SP-<%= numArgs %>-5
+@SP 
+D=M
+@<%= numArgs %>
+D= D-A
+@5
+D= D-A
+@ARG
+M=D // arg set 
+// LCL = SP
+@SP 
+D=M
+@LCL
+M=D // LCL set
+// goto <%= functionName %>
+@<%= functionName %> 
+0;JEQ
+
+(<%= functionName %>$return)
+<% @current_function_name = functionName %>
