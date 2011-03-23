@@ -1,5 +1,5 @@
 // call <%= functionName %> <%= numArgs %>
-@<%= functionName %>$return //push return address
+@<%= functionName %><%= @functionLabel %>$return //push return address
 D=A
 @SP
 A=M
@@ -53,8 +53,15 @@ D=M
 @LCL
 M=D // LCL set
 // goto <%= functionName %>
-@<%= functionName %> 
+@<%= functionName %>
 0;JEQ
 
-(<%= functionName %>$return)
+(<%= functionName %><%= @functionLabel %>$return)
+<% if functionName == "Sys.init" then %>
+@<%= functionName %><%= @functionLabel %>$return
+0;JMP
+<% end %>
+
+
 <% @current_function_name = functionName %>
+<%  @functionLabel =  @functionLabel+1 %>

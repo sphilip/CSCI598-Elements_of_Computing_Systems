@@ -43,15 +43,15 @@ $label_index=0
     }
 
     @current_function_name = "MAIN"
+    @functionLabel = 0
     
     @output.print "//bootstrap code
 @256 
 D=A
 @0 // set SP to 256
 M=D
-
-@Sys.init
-0;JEQ\n\n"
+"
+writeCall("Sys.init","0")
     
   end
 
@@ -132,6 +132,7 @@ M=D
       erb = ERB.new(infile.read)
       @output.write erb.result(binding)
     end
+    
   end
 
   # write assembly code return command

@@ -71,9 +71,9 @@ class Parser
     # it's a file!
     elsif File.file?(input)
 
-      if !File.extname(input) != ".vm"
+      if File.extname(input) != ".vm"
 	puts "#{File.basename(input)} is not a valid file\n\n"
-	
+		
       else
 	# Open file & pull the name of file to give the output the same file name
 	file = File.new(input,"r")
@@ -92,6 +92,7 @@ class Parser
 	file.close
 	@code.close
       end
+      
     # maybe the user inputted something wrong?
     else puts "#{input} is not found.  Does it even exist?\n"
     end
