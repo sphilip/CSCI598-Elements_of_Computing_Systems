@@ -57,6 +57,7 @@ class Parser
       
       files.each do |file|
 	print "Reading from #{file}\n"
+	@code.staticName = File.basename(file, ".vm")
 	inputFile = File.new(file,"r")
 	readFile(inputFile)
 	inputFile.close
@@ -123,7 +124,7 @@ class Parser
 	end
 	
 	inputFile.close   
-	
+	@code.staticName = File.basename(file, ".vm")
 	readFile(file)
 	file.close
 	@code.close

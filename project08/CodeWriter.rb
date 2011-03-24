@@ -2,13 +2,14 @@ require 'erb'
 
 # tranlsation VM commands into Hack assembly code
 class CodeWriter
+  attr_accessor :staticName
 $label_index=0
 
   # open output file
   def initialize(path)
 
     @output = File.open(path,"w")
-    @base = File.basename(path, ".asm") # for static variables
+#     @base = File.basename(path, ".asm") # for static variables
    
     @segment_hash = {
       "push constant" => "./templates/push-constant.erb",
