@@ -8,8 +8,8 @@ $label_index=0
   def initialize(path)
 
     @output = File.open(path,"w")
-    @base = File.basename(path, ".asm")
-    
+    @base = File.basename(path, ".asm") # for static variables
+   
     @segment_hash = {
       "push constant" => "./templates/push-constant.erb",
       "push local" => "./templates/push-lcl.erb",
@@ -44,17 +44,24 @@ $label_index=0
 
     @current_function_name = "MAIN"
     @functionLabel = 0
+      
+  end
+
+  
+  def writeBootstrap()#doWrite)
     
-    @output.print "//bootstrap code
+#     if doWrite == true then
+
+      @output.print "//bootstrap code
 @256 
 D=A
 @0 // set SP to 256
 M=D
 "
-writeCall("Sys.init","0")
-    
+      writeCall("Sys.init","0")
+#     end
   end
-
+  
   # inform code writer that translation of new VM file is started
   # input: string (file name)
   # output: none
@@ -103,11 +110,13 @@ writeCall("Sys.init","0")
   # write assembly code for label command
   # input: string
   def writeLabel(label)
+    
     if label.downcase.split("end").length > 1 then
       @output.print "(#{@current_function_name}$#{label})\n0;JEQ\n\n"
     else
       @output.print "(#{@current_function_name}$#{label})\n\n"
     end
+  
   end
 
   # writes assembly code for goto command

@@ -1,12 +1,12 @@
 //push static <%=  index %>
-@<%= @base %>.<%= index %> //@16
+@<%= @base %>.<%= index %>
+//D=M
+//@<%= index %>
+//D=A+D // static[<%= index %>]
+//A=D
 D=M
-@<%= index %>
-D=A+D // static[<%= index %>]
-A=D
-D=M
-@13
-M=D // store data @ temp (not TEMP segment)
+//@13
+//M=D // store data @ temp (not TEMP segment)
 @SP
 A=M
 M=D // put data @ stack

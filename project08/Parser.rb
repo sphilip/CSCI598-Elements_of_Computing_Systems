@@ -37,6 +37,25 @@ class Parser
       @code = CodeWriter.new(path)
       
       files.each do |file|
+	
+	inputFile = File.new(file,"r")
+	inputFileLines = inputFile.readlines
+	bootstrap = Class.new
+	inputFileLines.each do | inputFileLine|
+	
+	  if !inputFileLine.gsub!(/(Sys.init)/,"").nil?
+# 	    bootstrap = true
+	    @code.writeBootstrap()
+	    break
+# 	  else bootstrap = false
+	  end
+	
+	end
+	
+	inputFile.close      
+      end
+      
+      files.each do |file|
 	print "Reading from #{file}\n"
 	inputFile = File.new(file,"r")
 	readFile(inputFile)
@@ -88,6 +107,23 @@ class Parser
 	# open output file
 	@code = CodeWriter.new(path)
 
+	# check file for Sys.init
+	inputFile = File.new(input,"r")
+	inputFileLines = inputFile.readlines
+	bootstrap = Class.new
+	inputFileLines.each do | inputFileLine|
+	
+	  if !inputFileLine.gsub!(/(Sys.init)/,"").nil?
+# 	    bootstrap = true
+	    @code.writeBootstrap()
+	    break
+# 	  else bootstrap = false
+	  end
+	
+	end
+	
+	inputFile.close   
+	
 	readFile(file)
 	file.close
 	@code.close
@@ -100,7 +136,9 @@ class Parser
   end
 
   def readFile(file)
-
+    
+    
+    
     # store all lines as an array
     lines = file.readlines
     lines.each do |line|
