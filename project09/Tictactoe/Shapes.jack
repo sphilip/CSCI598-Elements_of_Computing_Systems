@@ -1,0 +1,79 @@
+/** Responsible for drawing an 'X' or an 'O' at a given location */
+class Shapes
+{
+  field char player;
+  field int sizeX, sizeY;
+
+  /** Create a new shape (ie. player) and the max size of the shape
+  inputs: the player piece (char), max size (Array)
+  output: self-reference
+  */
+  constructor Shapes new(char p, Array size)
+  {
+    let player = p;
+    let sizeX = size[0];
+    let sizeY = size[1];
+
+    return this;
+  }
+
+  /** Deallocate memory
+  input: none
+  output: none
+  */
+  method void dispose()
+  {
+    do Memory.deAlloc(this);
+    return;
+  }
+
+  /** test method */
+  method void print()
+  {
+    do Output.printString("oh yeahh....");
+    do Output.println();
+
+    return;
+  }
+
+  /** The main drawing method.  Calls the necessary method to draw the proper piece.
+  inputs: player (char)
+  output: none
+  */
+  method void draw(char p)
+  {
+    if (p = 120)
+    {
+      do drawX();
+    }
+
+    if (p = 111)
+    {
+      do drawO();
+    }
+    return;
+  }
+
+  /** Draw an 'X' at the specified location
+  input:none
+  output:none
+  */
+  method void drawX()
+  {
+    var int x,y;
+    //let x =
+    //do Screen.drawLine();
+    //do Screen.drawLine();
+    return;
+  }
+
+  /** Draw an 'O' at the specified location
+  input:none
+  output:none
+  */
+  method void drawO()
+  {
+   // do Output.println();
+    return;
+  }
+}
