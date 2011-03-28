@@ -1,0 +1,288 @@
+/**
+ * The TicJackToe class implements a tic-tac-toe game.
+ */
+class TicJackToe {
+
+	// O, X
+	field char player;
+
+	// location of move on the board
+	field Array board;
+
+	/** Constructs a new TicJackToe Game. */
+	constructor TicJackToe new() {
+		var int i;
+		let i=0;
+		let board = Array.new(9);
+		while(i<9) {
+			let board[i]=32;
+			let i=i+1;
+		}
+
+		// X goes first
+		let player = 88;
+
+		return this;
+	}
+
+	/** Deallocates the object's memory. */
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	/** Draws the board to the screen. */
+	method void draw() {
+		var int i;
+		var int row;
+		var int col;
+		var int mod;
+
+		do Output.printString("1  | | ");
+		do Output.println();
+		do Output.printString("  -+-+-");
+		do Output.println();
+		do Output.printString("2  | | ");
+		do Output.println();
+		do Output.printString("  -+-+-");
+		do Output.println();
+		do Output.printString("3  | | ");
+		do Output.println();
+		do Output.printString("  1 2 3");
+		do Output.println();
+
+		let i=0;
+		while(i<9) {
+			// map board struct to row, col
+			let row = i/3;
+			let row = row+1;
+
+			let mod = i/3;
+			let mod = 3*mod;
+			let col = i-mod;
+
+			// map to screen coords
+			let row=row-1;
+			let row=row*2;
+
+			let col=col-1;
+			let col=col*2;
+			let col=col+4;
+
+			do Output.moveCursor(row,col);
+			do Output.printChar(board[i]);
+			let i=i+1;
+		}
+
+		do Output.moveCursor(8,0);
+		return;
+	}
+
+	/** Take input from keyboard, row and col. */
+	method void takeInput() {
+		var int row;
+		var int col;
+		var int mod;
+		var int index;
+
+		do Output.printChar(player);
+		do Output.printString("'s turn");
+		do Output.println();
+
+		let index=-1;
+		// board[index]==X or O ask for input
+		while((board[index]=88) | (board[index]=79) | (index=-1)) {
+			let row=4;
+			while((row<1)|(row>3)) {
+				let row=Keyboard.readInt("row:");
+				if((row<1)|(row>3)) {
+					do Output.printString("Invaild row!");
+					do Output.println();
+				}
+			}
+
+			let col=4;
+			while((col<1)|(col>3)) {
+				let col=Keyboard.readInt("col:");
+				if((col<1)|(col>3)) {
+					do Output.printString("Invaild column!");
+					do Output.println();
+				}
+			}
+
+			let row = row-1;
+			let row = row*3;
+
+			let col = col-1;
+
+			// set the board[index]
+			let index = row+col;
+			if((board[index]=88) | (board[index]=79)) {
+				do Output.printString("Invaild placement!");
+				do Output.println();
+			}
+		}
+		let board[index]=player;
+		return;
+	}
+
+	/** is the game over? */
+	method int over() {
+		var int i;
+		var int j;
+		var int count;
+		var int index;
+		var int row;
+		var int col;
+		let i=0;
+		let j=0;
+		let count=0;
+
+		// check rows
+		while(j<3) {
+			let count=0;
+			let i=0;
+			while(i<3) {
+				if(board[i+(j*3)]=88)
+				{
+					let count=count+1;
+				}
+				if(board[i+(j*3)]=79)
+				{
+					let count=count-1;
+				}
+				let i=i+1;
+			}
+			if((count=3) | (count=-3)) {
+				return count;
+			}
+			let j=j+1;
+		}
+
+		let i=0;
+		let j=0;
+		let count=0;
+
+		// check cols
+		while(j<3) {
+			let count=0;
+			let i=0;
+			while(i<3) {
+				if(board[j+(i*3)]=88)
+				{
+					let count=count+1;
+				}
+				if(board[j+(i*3)]=79)
+				{
+					let count=count-1;
+				}
+				let i=i+1;
+			}
+			if((count=3) | (count=-3)) {
+				return count;
+			}
+			let j=j+1;
+		}
+
+		let i=0;
+		let count=0;
+
+		// check lower diag
+		while(i<3) {
+			let row = i*3;
+			let col = i;
+			let index = row+col;
+
+			if(board[index]=88)
+			{
+				let count=count+1;
+			}
+			if(board[index]=79)
+			{
+				let count=count-1;
+			}
+			if((count=3) | (count=-3)) {
+				return count;
+			}
+			let i=i+1;
+		}
+
+		let i=0;
+		let count=0;
+
+		// check upper diag
+		while(i<3) {
+			let row = i*3;
+			let col = 2-i;
+			let index = row+col;
+
+			if(board[index]=88)
+			{
+				let count=count+1;
+			}
+			if(board[index]=79)
+			{
+				let count=count-1;
+			}
+			if((count=3) | (count=-3)) {
+				return count;
+			}
+			let i=i+1;
+		}
+
+		// else a cat
+		let i=0;
+		let count=0;
+
+		// check if board is full
+		while(i<9) {
+			if((board[i]=88) | (board[i]=79))
+			{
+				let count=count+1;
+			}
+			let i=i+1;
+		}
+		if(count=9) {
+			return count;
+		}
+
+		// game is not over
+		return 0;
+	}
+
+	/** Take input from keyboard, row and col. */
+	method void switchPlayer() {
+		if(player=88) {
+			let player=79;
+		}
+		else {
+			let player=88;
+		}
+		return;
+	}
+
+	/** Starts the game. */
+	method void run() {
+		while ((over()<3) & (over()>-3)) {
+			do Output.moveCursor(0,0);
+			do Screen.clearScreen();
+			do draw();
+			do takeInput();
+			do switchPlayer();
+		}
+		do Output.moveCursor(0,0);
+		do Screen.clearScreen();
+		do draw();
+		do switchPlayer();
+		if((over()=3) | (over()=-3)) {
+			do Output.printChar(player);
+			do Output.printString(" wins!");
+		}
+		else {
+			do Output.printString("cat");
+		}
+		do Output.println();
+
+		return;
+	}
+}
