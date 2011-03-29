@@ -74,7 +74,7 @@ push argument 1
 call Math.multiply 2
 pop local 0
 push this 0
-push constant 120
+push constant 88
 eq
 if-goto IF_TRUE0
 goto IF_FALSE0
@@ -96,7 +96,7 @@ call Shapes.drawX 3
 pop temp 0
 label IF_FALSE0
 push this 0
-push constant 111
+push constant 79
 eq
 if-goto IF_TRUE1
 goto IF_FALSE1

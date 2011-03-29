@@ -48,12 +48,12 @@ class Shapes
     var int index;
     let index = (2*spotIndex);
 
-    if (player = 120)
+    if (player = 88)
     {
       do drawX(locations[index], locations[index+1]);
     }
 
-    if (player = 111)
+    if (player = 79)
     {
       do drawO(locations[index], locations[index+1]);
     }
