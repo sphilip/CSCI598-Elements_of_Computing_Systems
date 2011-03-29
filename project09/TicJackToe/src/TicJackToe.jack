@@ -6,8 +6,14 @@ class TicJackToe {
 	// O, X
 	field char player;
 
-	// location of move on the board
+	// location of all moves on the board
 	field Array board;
+	
+	// location of last move on the board
+	field int lastIndex;
+	
+	// graphical board
+	field Board gBoard;
 
 	/** Constructs a new TicJackToe Game. */
 	constructor TicJackToe new() {
@@ -22,59 +28,56 @@ class TicJackToe {
 		// X goes first
 		let player = 88;
 
+		// new graphical board
+		let gBoard = Board.new(255,255);
+
 		return this;
 	}
 
 	/** Deallocates the object's memory. */
 	method void dispose() {
 		do Memory.deAlloc(this);
+		do gBoard.dispose();
 		return;
 	}
 
 	/** Draws the board to the screen. */
 	method void draw() {
-		var int i;
 		var int row;
 		var int col;
 		var int mod;
+		var Shapes shape;
+		var Array s,l;
 
-		do Output.printString("1  | | ");
-		do Output.println();
-		do Output.printString("  -+-+-");
-		do Output.println();
-		do Output.printString("2  | | ");
-		do Output.println();
-		do Output.printString("  -+-+-");
-		do Output.println();
-		do Output.printString("3  | | ");
-		do Output.println();
-		do Output.printString("  1 2 3");
-		do Output.println();
+	  let s = gBoard.pieceSize();
+	  let l = gBoard.pieceLocation();
+		
 
-		let i=0;
-		while(i<9) {
-			// map board struct to row, col
-			let row = i/3;
-			let row = row+1;
+		// map board struct to row, col
+		let row = lastIndex/3;
+		let row = row+1;
 
-			let mod = i/3;
-			let mod = 3*mod;
-			let col = i-mod;
+		let mod = lastIndex/3;
+		let mod = 3*mod;
+		let col = lastIndex-mod;
 
-			// map to screen coords
-			let row=row-1;
-			let row=row*2;
-
-			let col=col-1;
-			let col=col*2;
-			let col=col+4;
-
-			do Output.moveCursor(row,col);
-			do Output.printChar(board[i]);
-			let i=i+1;
-		}
-
-		do Output.moveCursor(8,0);
+		let shape=Shapes.new(board[lastIndex], s, l);
+		do shape.draw(lastIndex);
+		
+		return;
+	}
+	
+	/* clear the input area */
+	method void clearInputArea()
+	{
+		do Output.moveCursor(0,32);
+		do Output.printString("          ");
+		do Output.moveCursor(1,32);
+		do Output.printString("          ");
+		do Output.moveCursor(2,32);
+		do Output.printString("          ");
+		do Output.moveCursor(22,32);
+		do Output.printString("                  ");
 		return;
 	}
 
@@ -84,6 +87,7 @@ class TicJackToe {
 		var int col;
 		var int mod;
 		var int index;
+		do Output.moveCursor(0,32);
 
 		do Output.printChar(player);
 		do Output.printString("'s turn");
@@ -94,8 +98,10 @@ class TicJackToe {
 		while((board[index]=88) | (board[index]=79) | (index=-1)) {
 			let row=4;
 			while((row<1)|(row>3)) {
+				do Output.moveCursor(1,32);
 				let row=Keyboard.readInt("row:");
 				if((row<1)|(row>3)) {
+					do Output.moveCursor(22,32);
 					do Output.printString("Invaild row!");
 					do Output.println();
 				}
@@ -103,8 +109,10 @@ class TicJackToe {
 
 			let col=4;
 			while((col<1)|(col>3)) {
+				do Output.moveCursor(2,32);
 				let col=Keyboard.readInt("col:");
 				if((col<1)|(col>3)) {
+					do Output.moveCursor(22,32);
 					do Output.printString("Invaild column!");
 					do Output.println();
 				}
@@ -118,10 +126,16 @@ class TicJackToe {
 			// set the board[index]
 			let index = row+col;
 			if((board[index]=88) | (board[index]=79)) {
+				do Output.moveCursor(22,32);
 				do Output.printString("Invaild placement!");
+				do Output.moveCursor(1,32);
+				do Output.printString("          ");
+				do Output.moveCursor(2,32);
+				do Output.printString("          ");
 				do Output.println();
 			}
 		}
+		let lastIndex=index;
 		let board[index]=player;
 		return;
 	}
@@ -263,23 +277,42 @@ class TicJackToe {
 
 	/** Starts the game. */
 	method void run() {
+		do gBoard.drawBoard();
 		while ((over()<3) & (over()>-3)) {
-			do Output.moveCursor(0,0);
-			do Screen.clearScreen();
+			do clearInputArea();
 			do draw();
 			do takeInput();
 			do switchPlayer();
 		}
-		do Output.moveCursor(0,0);
-		do Screen.clearScreen();
+		do clearInputArea();
 		do draw();
 		do switchPlayer();
+		do Output.moveCursor(11,12);
 		if((over()=3) | (over()=-3)) {
 			do Output.printChar(player);
 			do Output.printString(" wins!");
 		}
 		else {
-			do Output.printString("cat");
+			do Screen.clearScreen();
+			do Output.moveCursor(10,0);
+			do Output.printString("              .-o=o-.");
+			do Output.println();
+			do Output.printString("          ,  /=o=o=o=\ .--.");
+			do Output.println();
+			do Output.printString("         _|\\|=o=O=o=O=|    \\");
+			do Output.println();
+			do Output.printString("     __.'  a`\\=o=o=o=(`\\   /  ");
+			do Output.println();
+			do Output.printString("     '.   a 4/`|.-\"\"'`\\ \\ ;'`)   .---.");
+			do Output.println();
+			do Output.printString("       )   .'  /   .--'  |  /   / .-._)");
+			do Output.println();
+			do Output.printString("       '\\   _.'   /     /`-;__.' /");
+			do Output.println();
+			do Output.printString("         '--.____.\\    /--.___.-'");
+			do Output.println();
+			do Output.printString("                   `\"\"`");
+			do Output.println();
 		}
 		do Output.println();
 
