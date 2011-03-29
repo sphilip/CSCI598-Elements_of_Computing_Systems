@@ -220,18 +220,22 @@ push temp 0
 pop that 0
 push local 2
 return
-function Board.pieceLocation 3
+function Board.pieceLocation 5
 push argument 0
 pop pointer 0
 push constant 18
 call Array.new 1
+pop local 4
+push constant 10
 pop local 2
-push constant 4
+push constant 10
+pop local 3
+push local 2
 pop local 0
-push constant 4
+push local 3
 pop local 1
 push constant 0
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -239,17 +243,13 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 1
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
 push local 0
 push this 0
 push constant 3
@@ -257,7 +257,7 @@ call Math.divide 2
 add
 pop local 0
 push constant 2
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -265,17 +265,13 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 3
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
 push local 0
 push this 0
 push constant 3
@@ -283,7 +279,7 @@ call Math.divide 2
 add
 pop local 0
 push constant 4
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -291,18 +287,14 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 5
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push constant 4
+push local 2
 pop local 0
 push local 1
 push this 1
@@ -311,7 +303,7 @@ call Math.divide 2
 add
 pop local 1
 push constant 6
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -319,7 +311,7 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 7
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
@@ -327,17 +319,13 @@ pop pointer 1
 push temp 0
 pop that 0
 push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push constant 4
 push this 0
 push constant 3
 call Math.divide 2
 add
 pop local 0
 push constant 8
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -345,7 +333,7 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 9
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
@@ -353,17 +341,13 @@ pop pointer 1
 push temp 0
 pop that 0
 push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push constant 4
 push this 0
 push constant 3
 call Math.divide 2
 add
 pop local 0
 push constant 10
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -371,54 +355,14 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 11
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push constant 4
-push this 0
-push constant 3
-call Math.divide 2
-add
-pop local 0
-push constant 12
 push local 2
-add
-push local 0
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 13
-push local 2
-add
-push local 1
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push local 0
-call Output.printInt 1
-pop temp 0
-push local 1
-call Output.printInt 1
-pop temp 0
-push constant 4
-push this 0
-push constant 3
-call Math.divide 2
-add
 pop local 0
 push local 1
 push this 1
@@ -426,8 +370,30 @@ push constant 3
 call Math.divide 2
 add
 pop local 1
+push constant 12
+push local 4
+add
+push local 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 13
+push local 4
+add
+push local 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
+push this 0
+push constant 3
+call Math.divide 2
+add
+pop local 0
 push constant 14
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -435,7 +401,7 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 15
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
@@ -443,17 +409,13 @@ pop pointer 1
 push temp 0
 pop that 0
 push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push constant 4
 push this 0
 push constant 3
 call Math.divide 2
 add
 pop local 0
 push constant 16
-push local 2
+push local 4
 add
 push local 0
 pop temp 0
@@ -461,16 +423,12 @@ pop pointer 1
 push temp 0
 pop that 0
 push constant 17
-push local 2
+push local 4
 add
 push local 1
 pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
-push local 0
-push local 1
-call Screen.drawPixel 2
-pop temp 0
-push local 2
+push local 4
 return

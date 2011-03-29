@@ -97,67 +97,75 @@ class Board
   method Array pieceLocation()
   {
 
-    var int x,y;
+    var int x,y,startX,startY;
     var Array locations;
     let locations = Array.new(18);
 
+    let startX = 10;
+    let startY = 10;
     //0
-    let x = 4;
-    let y = 4;
+    let x = startX;
+    let y = startY;
     let locations[0] = x;
     let locations[1] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
 
     //1
     let x = x + (screenX/3);
     let locations[2] = x;
     let locations[3] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
 
     //2
     let x = x + (screenX/3);
     let locations[4] = x;
     let locations[5] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+    //     do Screen.drawCircle(x,y,3);
 
     //3
-    let x = 4;
+    let x = startX;
     let y = y + (screenY/3);
     let locations[6] = x;
     let locations[7] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+
 
     //4
-    let x = 4 + (screenX/3);
+    let x = x + (screenX/3);
     let locations[8] = x;
     let locations[9] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+    //     do Screen.drawCircle(x,y,3);
 
     //5
-    let x = 4 + (screenX/3);
+    let x = x + (screenX/3);
     let locations[10] = x;
     let locations[11] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+    //     do Screen.drawCircle(x,y,3);
 
     //6
-    let x = 4 + (screenX/3);
+    let x = startX;
+    let y = y + (screenY/3);
     let locations[12] = x;
     let locations[13] = y;
-    do Screen.drawPixel(x,y);
-    do Output.printInt(x);
-    do Output.printInt(y);
+    //     do Screen.drawPixel(x,y);
+    //     do Screen.drawCircle(x,y,3);
+
     //7
-    let x = 4 + (screenX/3);
-    let y = y + (screenY/3);
+    let x = x + (screenX/3);
     let locations[14] = x;
     let locations[15] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+    //     do Screen.drawCircle(x,y,3);
 
     //8
-    let x = 4 + (screenX/3);
+    let x = x + (screenX/3);
     let locations[16] = x;
     let locations[17] = y;
-    do Screen.drawPixel(x,y);
+    //     do Screen.drawPixel(x,y);
+//     do Screen.drawCircle(x,y,3);
 
     return locations;
   }

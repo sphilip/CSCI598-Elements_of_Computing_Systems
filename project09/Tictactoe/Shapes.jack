@@ -3,16 +3,18 @@ class Shapes
 {
   field char player;
   field int sizeX, sizeY;
+  field Array locations;
 
   /** Create a new shape (ie. player) and the max size of the shape
   inputs: the player piece (char), max size (Array)
   output: self-reference
   */
-  constructor Shapes new(char p, Array size)
+  constructor Shapes new(char p, Array s, Array l)
   {
     let player = p;
-    let sizeX = size[0];
-    let sizeY = size[1];
+    let sizeX = s[0];
+    let sizeY = s[1];
+    let locations=l;
 
     return this;
   }
@@ -23,6 +25,7 @@ class Shapes
   */
   method void dispose()
   {
+    do locations.dispose();
     do Memory.deAlloc(this);
     return;
   }
@@ -37,20 +40,24 @@ class Shapes
   }
 
   /** The main drawing method.  Calls the necessary method to draw the proper piece.
-  inputs: player (char)
+  inputs: player (char), chosen location (int)
   output: none
   */
-  method void draw(char p)
+  method void draw(int spotIndex)
   {
-    if (p = 120)
+    var int index;
+    let index = (2*spotIndex);
+
+    if (player = 120)
     {
-      do drawX();
+      do drawX(locations[index], locations[index+1]);
     }
 
-    if (p = 111)
+    if (player = 111)
     {
-      do drawO();
+      do drawO(locations[index], locations[index+1]);
     }
+
     return;
   }
 
@@ -58,12 +65,12 @@ class Shapes
   input:none
   output:none
   */
-  method void drawX()
+  method void drawX(int x,int y)
   {
-    var int x,y;
-    //let x =
-    //do Screen.drawLine();
-    //do Screen.drawLine();
+    do Screen.setColor(true);
+    do Screen.drawLine(x,y,x+sizeX,y+sizeY);
+    do Screen.drawLine(x+sizeX,y,x,y+sizeY);
+
     return;
   }
 
@@ -71,9 +78,40 @@ class Shapes
   input:none
   output:none
   */
-  method void drawO()
+  method void drawO(int x, int y)
   {
-   // do Output.println();
-    return;
+   var int rad, newX, newY;
+
+   let newX = x + (sizeX/2);
+   let newY = y + (sizeY/2);
+
+   if (sizeX < sizeY)
+   {
+     let rad = (sizeX/2);
+   }
+
+   else
+   {
+     let rad = (sizeY/2);
+   }
+
+   if (rad > 181)
+   {
+    let rad = 180;
+   }
+
+
+   do Output.setColor(true);
+//    do Output.printInt(rad);
+//    do Output.println();
+//    do Output.printInt(newX);
+//    do Output.println();
+//    do Output.printInt(newY);
+   do Screen.drawCircle(newX,newY,rad);
+
+   // is setting color more than once causing problems?
+   do Screen.setColor(false);
+   do Screen.drawCircle(newX,newY,rad-2);
+   return;
   }
 }

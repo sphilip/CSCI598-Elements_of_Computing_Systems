@@ -14,8 +14,11 @@ class Main
     let s = b.pieceSize();
     let l = b.pieceLocation();
 
-    let x = Shapes.new(120,s);
-    let o = Shapes.new(111,s);
+    let x = Shapes.new(120,s,l);
+    let o = Shapes.new(111,s,l);
+
+    do x.draw(5);
+    do o.draw(2);
 
     do s.dispose();
     do b.dispose();
