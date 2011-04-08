@@ -28,8 +28,8 @@ class JackTokenizer
 
     elsif File.file?(param)
 
-      newFile = File.basename(f,".jack") + ".win.xml"
-      path = "./" + param + newFile
+      newFile = File.basename(param,".jack") + ".win.xml"
+      path = "./" + File.dirname(param) + "/"  + newFile
       outputFile = File.new(path,'w')
       @xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 2 )
 
@@ -57,9 +57,10 @@ class JackTokenizer
       if !line.empty? or !line.nil?
 	tokens = tokens + line.split()
       end
+ 
     end
 
-#     puts tokens.inspect
+    puts tokens.inspect
     compilation = CompilationEngine.new(tokens, @xml)
     inputFile.close
 
