@@ -45,48 +45,89 @@ class JackTokenizer
 
   def executeTokenization(file)
 
+    @symbol = {
+  "{" => "{",
+  "}" => "}",
+  "(" => "(",
+  ")" => ")",
+  "[" => "[",
+  "]" => "]",
+  "." => ".",
+  "," => ",",
+  ";" => ";",
+  "+" => "+",
+  "-" => "-",
+  "*" => "*",
+  "/" => "/",
+  "&" => "&amp;",
+  "|" => "|",
+  "<" => "&lt;",
+  ">" => "&gt;",
+  "=" => "=",
+  "~" => "~"
+          }
+
     inputFile = File.open(file,"r")
     print "Reading the file #{file}\n"
 
     tokens = []
-    line = "class Main { test.new('b')"
-    y = line.split(/[^\s]/)
-    puts y.inspect
-    return
+    newline = ""
     inputFile.readlines.each do |line|
-      # parse single / multiline comments
-#     line = "class Main {"
+      
       line = line.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
-
-      y = line.split(/\w*/).uniq
-
-      startpos = 0
-      endpos = 0
-
+      
+      otherQuote = false
+      otherIndex = 0
       for i in 0...line.size
-	for j in 0...y.size
-	  found = false
-
-	  if line[i].chr == y[j] and !y[j].empty?
-	    endpos = i
-	    found = true
-	  end
-
-	  if found then
-	    if !y[j].empty? and !line[startpos...endpos].empty? then
-	      tokens.push(line[startpos...endpos])
-	      tokens.push(y[j])
-	    end
-	    startpos = endpos+1
-	  end
-
+	if @symbol.has_key?(line[i].chr)
+	  newline << " #{line[i].chr} "
+	else
+	  newline << line[i].chr  
 	end
+	
+# 	if line[i].chr == "\"" and otherQuote == false then
+# 	  otherIndex = i
+# 	  otherQuote = true
+# 	  	  
+# 	elsif line[i].chr == "\"" and otherQuote == true then
+# 	  newline << line[otherIndex..i] << " "
+# 	  otherQuote = false
+# 	  	
+# 	elsif @symbol.has_key?(line[i].chr)
+# 	  newline << " #{line[i].chr} "
+# 	
+# 	else
+# 	  newline << line[i].chr  
+# 	end
+	
+	
       end
-
+      
     end
 
-    puts tokens.inspect
-
+    tokens = newline.split()
+            
+#     for i in 0...tokens.size
+#       j=0
+#       tag = tokenType(tokens[i])
+#     
+#       if tag == :StringConstant and j >= 0 then
+# 	j=j+1
+#       end
+# 
+#       if tag != :StringConstant and j == 0 then
+# 	@xml.tag!(tag, " #{tokens[i]} ")
+#       elsif tag != :StringConstant and j>0 then
+# 	@xml.tag!(:StringConstant, " #{tokens[j-1...i-1]} ")
+# 	@xml.tag!(tag, " #{tokens[i]} ")
+#       end
+#     
+#     end
+    
+    tokens.each do |t|
+      @xml.tag!(tokenType(t), " #{t} ")
+    end
+    
     inputFile.close
 
   end
@@ -105,15 +146,14 @@ class JackTokenizer
       when  / \{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
       when 0...32767 then :integerConstant
-      when /^\"\w*\"/ then :StringConstant
+#       when /^\"\w*\"/ then :StringConstant
+	when /[^\"]/ then :StringConstant
       when /^[^\d]\w*/ then :identifier
       else :error
 
     end
 
-    @xml.tag!(tag,t)
-
-
+    return tag
 
   end
 
