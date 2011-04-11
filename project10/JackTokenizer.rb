@@ -45,30 +45,76 @@ class JackTokenizer
 
   def executeTokenization(file)
 
-    @xml.instruct!
     inputFile = File.open(file,"r")
     print "Reading the file #{file}\n"
 
     tokens = []
+    line = "class Main { test.new('b')"
+    y = line.split(/[^\s]/)
+    puts y.inspect
+    return
     inputFile.readlines.each do |line|
       # parse single / multiline comments
-      line = line.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/,'')
+#     line = "class Main {"
+      line = line.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
 
-      if !line.empty? or !line.nil?
-	tokens = tokens + line.split()
+      y = line.split(/\w*/).uniq
+
+      startpos = 0
+      endpos = 0
+
+      for i in 0...line.size
+	for j in 0...y.size
+	  found = false
+
+	  if line[i].chr == y[j] and !y[j].empty?
+	    endpos = i
+	    found = true
+	  end
+
+	  if found then
+	    if !y[j].empty? and !line[startpos...endpos].empty? then
+	      tokens.push(line[startpos...endpos])
+	      tokens.push(y[j])
+	    end
+	    startpos = endpos+1
+	  end
+
+	end
       end
- 
+
     end
 
     puts tokens.inspect
-    compilation = CompilationEngine.new(tokens, @xml)
+
     inputFile.close
 
   end
 
 
   #   Returns the type of the current token.
-  def tokenType
+  def tokenType(token)
+
+    tag = case token
+      when /(class)|(constructor)|(function)|
+	    (method)|(field)|(static)|(var)|(int)|
+	    (char)|(boolean)|(void)|(true)|(false)|
+	(null)|(this)|(let)|(do)|(if)|(else)|(while)|
+	(return)/ then :keyword
+
+      when  / \{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
+
+      when 0...32767 then :integerConstant
+      when /^\"\w*\"/ then :StringConstant
+      when /^[^\d]\w*/ then :identifier
+      else :error
+
+    end
+
+    @xml.tag!(tag,t)
+
+
+
   end
 
 #   Returns the keyword which is the current token. Should be called only when tokenType() is KEYWORD.
