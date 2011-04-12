@@ -137,7 +137,8 @@ class JackTokenizer
 
       when  / \{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
-      when 0...32767 then :integerConstant
+#      when 0...32767 then :integerConstant
+          when /\d+/ then :integerConstant
 #       when /\"\w*\"/ then :StringConstant
       when /\"/ then :StringConstant
       when /^[^\d]\w*/ then :identifier
