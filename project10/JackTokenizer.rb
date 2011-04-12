@@ -13,6 +13,8 @@ class JackTokenizer
 
       fileList.each do |f|
 
+	print "\nReading the file #{f}\n"
+	read = File.open(f,"r")
 	newFile = File.basename(f,".jack") + ".win.xml"
 	path = "./" + param + newFile
 
@@ -21,24 +23,32 @@ class JackTokenizer
 	@xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 2 )
 	print "Will be writing to #{param}#{newFile}\n"
 
-	executeTokenization(f)
+	executeTokenization(read)
+	 print "Finished with #{f}\n\n"
 	outputFile.close
       end
 
 
     elsif File.file?(param)
 
-      newFile = File.basename(param,".jack") + ".win.xml"
-      path = "./" + File.dirname(param) + "/"  + newFile
-      outputFile = File.new(path,'w')
-      @xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 1 )
+      if File.extname(param) != ".jack"
+	puts "This is not the right file.  You gave a file with an #{File.extname(param)} extension.  I must have your .jack!!!"
+      
+      else
+	print "\nReading the file #{param}\n"
+	read = File.open(param,"r")
+	newFile = File.basename(param,".jack") + ".win.xml"
+	path = "./" + File.dirname(param) + "/"  + newFile
+	outputFile = File.new(path,'w')
+	@xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 1 )
 
-      print "Will be writing to #{newFile}\n"
+	print "Will be writing to #{newFile}\n"
 
-      executeTokenization(path)
-      outputFile.close
+	executeTokenization(read)
+	 print "Finished with #{param}\n\n"
+	outputFile.close
+      end
     end
-
   end
 
 
@@ -68,15 +78,65 @@ class JackTokenizer
       "\"" => "\"",
       "'" => "'"
           }
-
-    inputFile = File.open(file,"r")
-    print "Reading the file #{File.basename(file,".win.xml")}.jack\n"
-
+    
     tokens = []
     newline = ""
-    inputFile.readlines.each do |line|
+#     lines = "// This file is part of the materials accompanying the book 
+# // \"The Elements of Computing Systems\" by Nisan and Schocken, 
+# // MIT Press. Book site: www.idc.ac.il/tecs
+# // File name: projects/10/Square/Main.jack
+# 
+# /**
+#  * The Main class initializes a new Square Dance game and starts it.
+#  */
+# class Main {"
 
-      line = line.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
+    lines = file.readlines.to_s
+    lines = lines.strip.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
+    lines.each do |l|
+      otherQuote = false
+      otherIndex = 0
+      for i in 0...l.size
+	if spaceOut.has_key?(l[i].chr)
+	  newline << " #{l[i].chr} "
+	else
+	  newline << l[i].chr
+	end
+      end
+    end
+    
+    tokens = newline.split()
+#     puts tokens[0..2]
+    j=0
+    stringDetected = false
+    @xml.tokens{
+    for i in 0...tokens.size
+
+      tag = tokenType(tokens[i])
+#       print "#{tokens[i]} \t #{tag}\n"
+      string = ""
+
+      if tag == :stringConstant and j == 0 then
+	j=i+1
+	stringDetected = true
+
+      elsif tag == :stringConstant and j > 0 then
+# 	print "#{:StringConstant} \t #{tokens[j...i]}\n"
+	for k in j...i
+	  string << tokens[k] << " "
+	end
+	@xml.tag!(:stringConstant, " #{string}")
+	j=0
+	stringDetected = false
+
+      elsif tag != :stringConstant and stringDetected == false
+	@xml.tag!(tag, " #{tokens[i]} ")
+      end
+
+    end }
+    return
+    file.readlines.each do |line|
+      line = line.strip.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
       # /(\/\*[^*]*\*+(?:[^*\/][^*]*\*+)*\/)|(\/\/.*$)/
 #       puts line
       otherQuote = false
@@ -123,8 +183,8 @@ class JackTokenizer
     end }
 
 
-    inputFile.close
-    print "Finished with #{File.basename(file,".win.xml")}.jack\n"
+    file.close
+   
 
   end
 
