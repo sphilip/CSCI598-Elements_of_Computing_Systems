@@ -45,26 +45,28 @@ class JackTokenizer
 
   def executeTokenization(file)
 
-    @symbol = {
-  "{" => "{",
-  "}" => "}",
-  "(" => "(",
-  ")" => ")",
-  "[" => "[",
-  "]" => "]",
-  "." => ".",
-  "," => ",",
-  ";" => ";",
-  "+" => "+",
-  "-" => "-",
-  "*" => "*",
-  "/" => "/",
-  "&" => "&amp;",
-  "|" => "|",
-  "<" => "&lt;",
-  ">" => "&gt;",
-  "=" => "=",
-  "~" => "~"
+    spaceOut= {
+      "{" => "{",
+      "}" => "}",
+      "(" => "(",
+      ")" => ")",
+      "[" => "[",
+      "]" => "]",
+      "." => ".",
+      "," => ",",
+      ";" => ";",
+      "+" => "+",
+      "-" => "-",
+      "*" => "*",
+      "/" => "/",
+      "&" => "&amp;",
+      "|" => "|",
+      "<" => "&lt;",
+      ">" => "&gt;",
+      "=" => "=",
+      "~" => "~",
+      "\"" => "\"",
+      "'" => "'"
           }
 
     inputFile = File.open(file,"r")
@@ -79,55 +81,45 @@ class JackTokenizer
       otherQuote = false
       otherIndex = 0
       for i in 0...line.size
-	if @symbol.has_key?(line[i].chr)
+	if spaceOut.has_key?(line[i].chr)
 	  newline << " #{line[i].chr} "
 	else
 	  newline << line[i].chr  
 	end
-	
-# 	if line[i].chr == "\"" and otherQuote == false then
-# 	  otherIndex = i
-# 	  otherQuote = true
-# 	  	  
-# 	elsif line[i].chr == "\"" and otherQuote == true then
-# 	  newline << line[otherIndex..i] << " "
-# 	  otherQuote = false
-# 	  	
-# 	elsif @symbol.has_key?(line[i].chr)
-# 	  newline << " #{line[i].chr} "
-# 	
-# 	else
-# 	  newline << line[i].chr  
-# 	end
-	
 	
       end
       
     end
 
     tokens = newline.split()
-            
-#     for i in 0...tokens.size
-#       j=0
-#       tag = tokenType(tokens[i])
-#     
-#       if tag == :StringConstant and j >= 0 then
-# 	j=j+1
-#       end
-# 
-#       if tag != :StringConstant and j == 0 then
-# 	@xml.tag!(tag, " #{tokens[i]} ")
-#       elsif tag != :StringConstant and j>0 then
-# 	@xml.tag!(:StringConstant, " #{tokens[j-1...i-1]} ")
-# 	@xml.tag!(tag, " #{tokens[i]} ")
-#       end
-#     
-#     end
+#     puts tokens[0..2]
+    j=0
+    stringDetected = false
+    for i in 0...tokens.size
+      
+      tag = tokenType(tokens[i])
+#       print "#{tokens[i]} \t #{tag}\n"
+      string = ""
+      
+      if tag == :StringConstant and j == 0 then
+	j=i+1
+	stringDetected = true
+      
+      elsif tag == :StringConstant and j > 0 then
+# 	print "#{:StringConstant} \t #{tokens[j...i]}\n"
+	for k in j...i
+	  string << tokens[k] << " "
+	end
+	@xml.tag!(:StringConstant, " #{string}")
+	j=0
+	stringDetected = false
+      
+      elsif tag != :StringConstant and stringDetected == false
+	@xml.tag!(tag, " #{tokens[i]} ")
+      end
     
-    tokens.each do |t|
-      @xml.tag!(tokenType(t), " #{t} ")
     end
-    
+        
     inputFile.close
 
   end
@@ -146,35 +138,39 @@ class JackTokenizer
       when  / \{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
       when 0...32767 then :integerConstant
-#       when /^\"\w*\"/ then :StringConstant
-	when /[^\"]/ then :StringConstant
+#       when /\"\w*\"/ then :StringConstant
+      when /\"/ then :StringConstant
       when /^[^\d]\w*/ then :identifier
-      else :error
-
+  else puts "haveing an issue #{token}"
+    :error
     end
-
+   
     return tag
 
   end
 
 #   Returns the keyword which is the current token. Should be called only when tokenType() is KEYWORD.
-  def keyWord
+  def keyWord(t)
+    return t
   end
 
 #   Returns the character which is the current token. Should be called only when tokenType() is SYMBOL.
-  def symbol
+  def symbol(t)
+    return t
   end
 
 #   Returns the identifier which is the current token. Should be called only when tokenType() is IDENTIFIER
-  def identifier
+  def identifier(t)
+    return t
   end
 
 #   Returns the integer value of the current token. Should be called only when tokenType() is INT_CONST
-  def intVal
+  def intVal(t)
+    return t
   end
 
 #   Returns the string value of the current token, without the double quotes. Should be called only when tokenType() is STRING_CONST.
-  def stringVal
+  def stringVal(t)
   end
 
 end
