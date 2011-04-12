@@ -31,7 +31,7 @@ class JackTokenizer
       newFile = File.basename(param,".jack") + ".win.xml"
       path = "./" + File.dirname(param) + "/"  + newFile
       outputFile = File.new(path,'w')
-      @xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 2 )
+      @xml = Builder::XmlMarkup.new(:target => outputFile, :indent => 1 )
 
       print "Will be writing to #{newFile}\n"
 
@@ -70,57 +70,61 @@ class JackTokenizer
           }
 
     inputFile = File.open(file,"r")
-    print "Reading the file #{file}\n"
+    print "Reading the file #{File.basename(file,".win.xml")}.jack\n"
 
     tokens = []
     newline = ""
     inputFile.readlines.each do |line|
-      
+
       line = line.gsub(/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/, '').strip
-      
+      # /(\/\*[^*]*\*+(?:[^*\/][^*]*\*+)*\/)|(\/\/.*$)/
+#       puts line
       otherQuote = false
       otherIndex = 0
       for i in 0...line.size
 	if spaceOut.has_key?(line[i].chr)
 	  newline << " #{line[i].chr} "
 	else
-	  newline << line[i].chr  
+	  newline << line[i].chr
 	end
-	
+
       end
-      
+
     end
 
     tokens = newline.split()
 #     puts tokens[0..2]
     j=0
     stringDetected = false
+    @xml.tokens{
     for i in 0...tokens.size
-      
+
       tag = tokenType(tokens[i])
 #       print "#{tokens[i]} \t #{tag}\n"
       string = ""
-      
-      if tag == :StringConstant and j == 0 then
+
+      if tag == :stringConstant and j == 0 then
 	j=i+1
 	stringDetected = true
-      
-      elsif tag == :StringConstant and j > 0 then
+
+      elsif tag == :stringConstant and j > 0 then
 # 	print "#{:StringConstant} \t #{tokens[j...i]}\n"
 	for k in j...i
 	  string << tokens[k] << " "
 	end
-	@xml.tag!(:StringConstant, " #{string}")
+	@xml.tag!(:stringConstant, " #{string}")
 	j=0
 	stringDetected = false
-      
-      elsif tag != :StringConstant and stringDetected == false
+
+      elsif tag != :stringConstant and stringDetected == false
 	@xml.tag!(tag, " #{tokens[i]} ")
       end
-    
-    end
-        
+
+    end }
+
+
     inputFile.close
+    print "Finished with #{File.basename(file,".win.xml")}.jack\n"
 
   end
 
@@ -129,23 +133,19 @@ class JackTokenizer
   def tokenType(token)
 
     tag = case token
-      when /(class)|(constructor)|(function)|
-	    (method)|(field)|(static)|(var)|(int)|
-	    (char)|(boolean)|(void)|(true)|(false)|
-	(null)|(this)|(let)|(do)|(if)|(else)|(while)|
-	(return)/ then :keyword
+  when /^(class|constructor|function|method|field|static|var|int|char|boolean|void|true|false|null|this|let|do|if|else|while|return)/ then :keyword
 
-      when  / \{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
+      when  /\{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
 #      when 0...32767 then :integerConstant
           when /\d+/ then :integerConstant
 #       when /\"\w*\"/ then :StringConstant
-      when /\"/ then :StringConstant
+      when /\"/ then :stringConstant
       when /^[^\d]\w*/ then :identifier
   else puts "haveing an issue #{token}"
     :error
     end
-   
+
     return tag
 
   end
