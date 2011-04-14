@@ -1,5 +1,3 @@
-require 'rubygems'
-
 class Node
   attr_accessor :token, :tag
   def initialize(aToken,aTag)
@@ -13,7 +11,7 @@ class NodeTree
   attr_accessor :tree
 
   def initialize
-    @tree = Array.new
+    @tree = []
   end
 
   def addToTree(n)

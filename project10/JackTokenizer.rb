@@ -2,7 +2,7 @@ require 'rubygems'
 require 'builder'
 require 'CompilationEngine'
 require 'Node'
-require 'ruby-debug'
+# require 'ruby-debug'
 
 # Removes all comments and white space from the input stream and breaks it into Jack-language tokens, as specified by the Jack grammar.
 class JackTokenizer
@@ -48,7 +48,7 @@ class JackTokenizer
     path = "./" + dirname + part1
     outputFile1 = File.new(path,"w")
 
-    @createTokens = Builder::XmlMarkup.new(:target => outputFile1, :indent => 2 )
+    @createTokensFile = Builder::XmlMarkup.new(:target => outputFile1, :indent => 2 )
     print "Will be writing the tokens to #{part1}\n"
 
     tokensArray = createTokensFrom(inputFile)
@@ -63,41 +63,18 @@ class JackTokenizer
 
     outputFile2 = File.new(path,"w")
 
-    @parseTokens = Builder::XmlMarkup.new(:target => outputFile2, :indent => 2 )
+    @parseTokensFile = Builder::XmlMarkup.new(:target => outputFile2, :indent => 2 )
     print "\nWill be writing parsed version of the file to #{part2}\n\n"
 
-    compiler = CompilationEngine.new(tokensArray,@parseTokens)
+    
+    compiler = CompilationEngine.new(tokensArray.tree[0...tokensArray.tree.size],@parseTokensFile)
     outputFile2.close
   end
 
 
   def createTokensFrom(file)
 
-    spaceOut= {
-      "{" => "{",
-      "}" => "}",
-      "(" => "(",
-      ")" => ")",
-      "[" => "[",
-      "]" => "]",
-      "." => ".",
-      "," => ",",
-      ";" => ";",
-      "+" => "+",
-      "-" => "-",
-      "*" => "*",
-      "/" => "/",
-      "&" => "&amp;",
-      "|" => "|",
-      "<" => "&lt;",
-      ">" => "&gt;",
-      "=" => "=",
-      "~" => "~",
-      "\"" => "\"",
-      "'" => "'"
-          }
-
-    specialSymbols = [
+   specialSymbols = [
       "{" ,
       "}" ,
       "(" ,
@@ -141,7 +118,7 @@ class JackTokenizer
 
     tokens = newline.split()
     tokens = XMLTokenization(tokens)
-    return tokenParsing(tokens)
+    return createTreeFrom(tokens)
 
   end
 
@@ -151,7 +128,7 @@ class JackTokenizer
     j=0
     stringDetected = false
 
-    @createTokens.tokens{
+    @createTokensFile.tokens{
       for i in 0...tokens.size
 
 	tag = tokenType(tokens[i])
@@ -166,13 +143,13 @@ class JackTokenizer
 	    string << tokens[k] << " "
 	  end
 
-	  @createTokens.tag!(:stringConstant, " #{string}")
+	  @createTokensFile.tag!(:stringConstant, " #{string}")
 	  j=0
 	  stringDetected = false
 	  realTokens.push(string)
 
 	elsif tag != :stringConstant and stringDetected == false
-	  @createTokens.tag!(tag, " #{tokens[i]} ")
+	  @createTokensFile.tag!(tag, " #{tokens[i]} ")
 	  realTokens.push(tokens[i])
 	end
 
@@ -183,7 +160,7 @@ class JackTokenizer
   end
 
   ### for Stage 2 - Parsing of tokens ###
-  def tokenParsing(tokens)
+  def createTreeFrom(tokens)
 
     tree = NodeTree.new
     tokens.each do |t|
