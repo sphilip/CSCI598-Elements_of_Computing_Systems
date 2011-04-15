@@ -180,9 +180,9 @@ class JackTokenizer
 
       when  /\{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
-      when /\d+/ then :integerConstant
+      when /^\d+/ then :integerConstant
       when /\"/ then :stringConstant
-      when /^[^\d]\w*/ then :identifier
+      when /^[^\d]\w+/ then :identifier
       else :error
     end
 

@@ -112,9 +112,48 @@ class CompilationEngine
   end
   
 #   Compiles a static declaration or a field declaration.
-  def compileClassVarDec(subToken)
+  def compileClassVarDec(tokens)
     puts "compiling ClassVarDec"
     ptr = 0
+    
+    while tokens[ptr].token != ";"
+      if @classVarDecStart.include?(tokens[ptr].token)
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+      end
+      
+      if @typeStart.include?(tokens[ptr].token) then
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+      end
+      
+      if tokens[ptr].tag == :identifier then
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+      end
+      
+      while tokens[ptr].token == ","
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+	
+	if tokens[ptr].tag == :identifier then
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
+      end
+      
+    end
+    
+    if tokens[ptr].token == ";" then
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
     
     puts "finished ClassVarDec"
     return ptr
@@ -212,6 +251,7 @@ class CompilationEngine
   def compileParameterList(tokens)
     puts "compiling ParameterList"
     ptr = 0
+   
     while tokens[ptr].token != ")"
       if @typeStart.include?(tokens[ptr].token) then
 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
@@ -225,11 +265,18 @@ class CompilationEngine
 	ptr = ptr+1
       end
 	
-      if tokens[ptr].token == "," then
+      while tokens[ptr].token == ","
 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	ptr = ptr+1
+	
+	 if tokens[ptr].tag == :identifier then
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
       end
+      
     end    
     
     puts "finished ParameterList"
@@ -238,28 +285,73 @@ class CompilationEngine
 
 #   Compiles a var declaration.
   def compileVarDec(tokens)
-     puts "compiling VarDec"
+    puts "compiling VarDec"
+    ptr = 0
+     
+    if tokens[ptr].token == "var" then
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+     
+    if @typeStart.include?(tokens[ptr].token) then
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    if tokens[ptr].tag == :identifier then
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+    
+    while tokens[ptr].token ==","
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+	
+      if @typeStart.include?(tokens[ptr].token) then
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+      end
+    
+      if tokens[ptr].tag == :identifier then
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	ptr = ptr+1
+      end
+    end
+    
+    if tokens[ptr].token == ";" then
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+    
      puts "finished VarDec"
+     return ptr
   end
 
 #   Compiles a sequence of statements, not including the enclosing “{}”.
   def compileStatements(tokens)
-     puts "compiling Statements"
-     ptr = 0
-     
-     
-     puts "finished Statements"
-     return ptr
+    puts "compiling Statements"
+    ptr = 0
+    
+    
+    puts "finished Statements"
+    return ptr
   end
 
 #   Compiles a do statement.
   def compileDo
-     puts "compiling Do"
+    puts "compiling Do"
   end
 
 #   Compiles a let statement.
   def compileLet
-     puts "compiling Let"
+    puts "compiling Let"
   end
 
   # Compiles a while statement.
