@@ -296,7 +296,7 @@ class CompilationEngine
       ptr = ptr+1
     end
 
-    if @typeStart.include?(tokens[ptr].token) then
+    if @typeStart.include?(tokens[ptr].token) or tokens[ptr].tag == :identifier then
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
