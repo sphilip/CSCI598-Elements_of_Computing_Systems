@@ -342,8 +342,7 @@ class CompilationEngine
     ptr = 0
     while tokens[ptr].token != "}"
       @xml.statement{
-      puts tokens[ptr].token
-      ptr = ptr + compileStatement(tokens[ptr...tokens.size])
+	ptr = ptr + compileStatement(tokens[ptr...tokens.size])
       }
     end
 
@@ -353,12 +352,14 @@ class CompilationEngine
 
   def compileStatement(tokens)
     ptr = 0
-   case tokens[0].token
-    when "let" then @xml.letStatement{ ptr = ptr + compileLet(tokens)}
-    when "if" then @xml.ifStatement{ ptr = ptr + compileIf(tokens)}
-    when "while" then @xml.whileStatement{ ptr = ptr + compileWhile(tokens)}
-    when "do" then @xml.doStatement{ ptr = ptr + compileDo(tokens)}
-    when "return" then @xml.returnStatement{ ptr = ptr + compileReturn(tokens)}
+
+    case tokens[0].token
+      when "let" then @xml.letStatement{ ptr = ptr + compileLet(tokens)}
+      when "if" then @xml.ifStatement{ ptr = ptr + compileIf(tokens)}
+      when "while" then @xml.whileStatement{ ptr = ptr + compileWhile(tokens)}
+      when "do" then @xml.doStatement{ ptr = ptr + compileDo(tokens)}
+      when "return" then @xml.returnStatement{ ptr = ptr + compileReturn(tokens)}
+      else puts "#{tokens[0].token} is not a valid statement"
     end
 
     return ptr
@@ -369,6 +370,21 @@ class CompilationEngine
     puts "compiling Do"
     ptr =0
 
+    puts tokens.inspect
+    puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+    @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    ptr = ptr+1
+
+    @xml.subroutineCall{
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      ptr = ptr + compileSubroutineCall(tokens[ptr..tokens.size])
+    }
+
+    if tokens[ptr].token == ";"
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
 
     puts "finished Do"
     return ptr
@@ -379,11 +395,8 @@ class CompilationEngine
     puts "compiling Let"
     ptr = 0
 
-    if tokens[ptr].token == "let" then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
-      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
-    end
 
     if tokens[ptr].tag == :identifier then
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
@@ -427,11 +440,8 @@ class CompilationEngine
     puts "compiling While"
     ptr =0
 
-    if tokens[ptr].token == "while" then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
-      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
-    end
 
     if tokens[ptr].token == "(" then
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
@@ -475,11 +485,8 @@ class CompilationEngine
     puts "compiling Return"
     ptr =0
 
-    if tokens[ptr].token == "return" then
-      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
-      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
-    end
 
     if tokens[ptr].token != ";" then
       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
@@ -503,72 +510,52 @@ class CompilationEngine
     puts "compiling If"
     ptr =0
 
-    if tokens[ptr].token == "if"
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-      ptr = ptr+1
-    end
+    @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    ptr = ptr+1
 
     if tokens[ptr].token == "("
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
 
     @xml.expression{
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       ptr = ptr + compileExpression(tokens[ptr...tokens.size])
     }
 
     if tokens[ptr].token == ")"
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
 
     if tokens[ptr].token == "{"
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
 
     @xml.statements {
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       ptr = ptr + compileStatements(tokens[ptr...tokens.size])
     }
 
     if tokens[ptr].token == "}"
-      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
 
     if tokens[ptr].token == "else"
       @xml.elseStatement{
-	puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
-
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
         ptr = ptr+1
 
         if tokens[ptr].token == "{"
-	  puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
 	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
           ptr = ptr+1
 	end
 
         @xml.statements {
-	  puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
 	  ptr = ptr + compileStatements(tokens[ptr...tokens.size])
         }
 
         if tokens[ptr].token == "}"
-	  "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
 	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
           ptr = ptr+1
         end
@@ -638,6 +625,11 @@ class CompilationEngine
 
 	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	 ptr = ptr+1
+
+       elsif tokens[ptr].token == "("
+	 @xml.subroutineCall{
+	   ptr = ptr + compileSubroutineCall(tokens[ptr...tokens.size])
+	 }
        end
      end
 
@@ -654,9 +646,95 @@ class CompilationEngine
      return ptr
   end
 
+  def compileSubroutineCall(tokens)
+    puts "compiling subroutineCall"
+    ptr = 0
+
+    if tokens[ptr].tag == :identifier
+      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+      ptr = ptr+1
+
+      if tokens[ptr].token == "("
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	ptr = ptr+1
+
+	@xml.expressionList{
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  ptr = ptr + compileExpressionList(tokens[ptr...tokens.size])
+	}
+
+	if tokens[ptr].token == ")"
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
+
+      elsif tokens[ptr].token == "."
+	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	ptr = ptr+1
+
+	if tokens[ptr].tag == :identifier
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
+
+	if tokens[ptr].token == "("
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
+
+	@xml.expressionList{
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  ptr = ptr + compileExpressionList(tokens[ptr...tokens.size])
+	}
+
+	if tokens[ptr].token == ")"
+	  puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	  ptr = ptr+1
+	end
+      end
+    end
+
+    puts "finished with subroutineCall"
+    return ptr
+  end
   # compiles a (possibly empty) comma-separated list of expressions
-  def compileExpressionList
+  def compileExpressionList(tokens)
      puts "compiling ExpressionList"
+     ptr = 0
+
+     puts tokens.inspect
+     if tokens[ptr].token != ")"
+       @xml.expression{
+	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	 ptr = ptr + compileExpression(tokens[ptr...tokens.size])
+       }
+
+       while tokens[ptr].token == ","
+	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+
+	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	 ptr = ptr+1
+
+	 @xml.expression{
+	   puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+	   ptr = ptr + compileExpression(tokens[ptr...tokens.size])
+	 }
+       end
+
+     else
+       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+       ptr = ptr+1
+     end
+
+     puts "finished ExpressionList"
+     return ptr
   end
 
 end
