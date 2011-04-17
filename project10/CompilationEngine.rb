@@ -498,6 +498,25 @@ class CompilationEngine
      if tokens[ptr].tag == :identifier
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
+
+       if tokens[ptr].token == "["
+	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	 ptr = ptr+1
+
+	 ptr = ptr + compileExpression(tokens[ptr...tokens.size])
+
+	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	 ptr = ptr+1
+       end
+     end
+
+     if tokens[ptr].token == "-" or tokens[ptr].token == "~"
+       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+       ptr = ptr+1
+
+       @xml.term{
+	 ptr = ptr + compileTerm(tokens[ptr...tokens.size])
+       }
      end
 
      puts "finishing Term"
