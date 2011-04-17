@@ -187,7 +187,7 @@ class JackTokenizer
 
       when /^\d+/ then :integerConstant
       when /\"/ then :stringConstant
-      when /^[^\d]\w+/ then :identifier
+      when /^[^\d]\w*/ then :identifier
       else :error
     end
 

@@ -440,9 +440,81 @@ class CompilationEngine
   end
 
   # Compiles an if statement, possibly with a trailing else clause.
-  def compileIf
+  def compileIf(tokens)
     puts "compiling If"
     ptr =0
+
+    if tokens[ptr].token == "if"
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    if tokens[ptr].token == "("
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    @xml.expression{
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      ptr = ptr + compileExpression(tokens[ptr...tokens.size])
+    }
+
+    if tokens[ptr].token == ")"
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    if tokens[ptr].token == "{"
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    @xml.statements {
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      ptr = ptr + compileStatements(tokens[ptr...tokens.size])
+    }
+
+    if tokens[ptr].token == "}"
+      puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      ptr = ptr+1
+    end
+
+    if tokens[ptr].token == "else"
+      @xml.elseStatement{
+	puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+
+	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+        ptr = ptr+1
+
+        if tokens[ptr].token == "{"
+	  puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+          ptr = ptr+1
+	end
+
+        @xml.statements {
+	  puts "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+	  ptr = ptr + compileStatements(tokens[ptr...tokens.size])
+        }
+
+        if tokens[ptr].token == "}"
+	  "#{ tokens[ptr].token} => #{ tokens[ptr].tag}"
+	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+          ptr = ptr+1
+        end
+      }
+    end
 
     puts "finished if"
     return ptr
