@@ -66,8 +66,8 @@ class JackTokenizer
     @parseTokensFile = Builder::XmlMarkup.new(:target => outputFile2, :indent => 2 )
     print "\nWill be writing parsed version of the file to #{part2}\n\n"
 
-    
-    compiler = CompilationEngine.new(tokensArray.tree[0...tokensArray.tree.size],@parseTokensFile)
+#     puts tokensArray.inspect
+    compiler = CompilationEngine.new(tokensArray[0...tokensArray.size],@parseTokensFile)
     outputFile2.close
   end
 
@@ -118,7 +118,8 @@ class JackTokenizer
 
     tokens = newline.split()
     tokens = XMLTokenization(tokens)
-    return createTreeFrom(tokens)
+#     return createTreeFrom(tokens)
+    return tokens
 
   end
 
@@ -143,40 +144,44 @@ class JackTokenizer
 	    string << tokens[k] << " "
 	  end
 
+	  n = Node.new(string,:stringConstant)
 	  @createTokensFile.tag!(:stringConstant, " #{string}")
 	  j=0
 	  stringDetected = false
-	  realTokens.push(string)
+	  realTokens.push(n)
 
 	elsif tag != :stringConstant and stringDetected == false
 	  @createTokensFile.tag!(tag, " #{tokens[i]} ")
-	  realTokens.push(tokens[i])
+	  n = Node.new(tokens[i],tag)
+	  realTokens.push(n)
 	end
 
       end
     }
 
+#     puts realTokens.inspect
     return realTokens
   end
 
   ### for Stage 2 - Parsing of tokens ###
-  def createTreeFrom(tokens)
-
-    tree = NodeTree.new
-    tokens.each do |t|
-      node = Node.new(t,tokenType(t))
-      tree.addToTree(node)
-    end
-
-    return tree
-  end
+#   def createTreeFrom(tokens)
+#
+#     tree = NodeTree.new
+#     tokens.each do |t|
+#       node = Node.new(t,tokenType(t))
+#       tree.addToTree(node)
+#     end
+#
+#     puts tree.inspect
+#     return tree
+#   end
 
 
   #   Returns the type of the current token.
   def tokenType(token)
 
     tag = case token
-      when /^(class|constructor|function|method|field|static|var|int|char|boolean|void|true|false|null|this|let|do|if|else|while|return)/ then :keyword
+      when /^(class|constructor|function|method|field|static|var|int|char|boolean|void|true|false|null|this|let|do|if|else|while|return)$/ then :keyword
 
       when  /\{|\}|\(|\)|\[|\]|\.|\,|\;|\+|\-|\*|\/|\&|\||\<|\>|\=|\~/ then :symbol
 
