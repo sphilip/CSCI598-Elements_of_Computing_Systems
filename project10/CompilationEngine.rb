@@ -75,14 +75,14 @@ class CompilationEngine
 
 
       if tokens[ptr].token == "{" then
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag, " { ")
 	ptr = ptr+1
       end
 
 
       while @classVarDecStart.include?(tokens[ptr].token)
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	# 	@currentElement << "classVarDec"
 	@xml.classVarDec {
 	  ptr = ptr + compileClassVarDec(tokens[ptr...tokens.size])
@@ -91,7 +91,7 @@ class CompilationEngine
 
 
       while @subroutineDecStart.include?(tokens[ptr].token)
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 # 	@currentElement << "subroutineDec"
 	@xml.subroutineDec {
 	  ptr = ptr + compileSubroutine(tokens[ptr...tokens.size])
@@ -101,16 +101,16 @@ class CompilationEngine
 
 
       if tokens[ptr].token == "}" then
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag, " } ")
 	ptr = ptr+1
       end
 
 
-#     else
-#       puts "Are you pondering what I am pondering, Pinky?"
-#       puts "I think so Brain, but why is ptr=#{ptr} while token size = #{tokens.size}?"
-#     end
+    if ptr > tokens.size then
+      puts "Are you pondering what I am pondering, Pinky?"
+      puts "I think so Brain, but why is ptr=#{ptr} while token size = #{tokens.size}?"
+    end
       puts "finished class"
   end
 
@@ -164,7 +164,7 @@ class CompilationEngine
 
 #   Compiles a complete method, function, or constructor.
   def compileSubroutine(tokens)
-    puts "compiling Subroutine"
+    puts "compiling SubroutineDec"
     ptr = 0
 
     if @subroutineDecStart.include?(tokens[ptr].token)
@@ -173,7 +173,7 @@ class CompilationEngine
 	ptr = ptr+1
     end
 
-    if @typeStart.include?(tokens[ptr].token) or tokens[ptr].token == "void"
+    if @typeStart.include?(tokens[ptr].token) or tokens[ptr].token == "void" or tokens[ptr].tag == :identifier
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
@@ -213,7 +213,7 @@ class CompilationEngine
     }
 #     end
 
-    puts "finished Subroutine"
+    puts "finished SubroutineDec"
     return ptr
   end
 
@@ -341,9 +341,9 @@ class CompilationEngine
     puts "compiling Statements"
     ptr = 0
     while tokens[ptr].token != "}"
-      @xml.statement{
+#       @xml.statement{
 	ptr = ptr + compileStatement(tokens[ptr...tokens.size])
-      }
+#       }
     end
 
     puts "finished Statements"
@@ -385,7 +385,7 @@ class CompilationEngine
     end
 
     if tokens[ptr].token == ";"
-      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
@@ -493,14 +493,14 @@ class CompilationEngine
       ptr = ptr+1
 
     if tokens[ptr].token != ";" then
-      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.expression{
 	ptr = ptr + compileExpression(tokens[ptr...tokens.size])
       }
     end
 
     if tokens[ptr].token == ";" then
-      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
@@ -642,6 +642,22 @@ class CompilationEngine
        end
      end
 
+     if tokens[ptr].token == "("
+       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+       ptr = ptr+1
+
+       @xml.expression{
+	ptr = ptr+compileExpression(tokens[ptr...tokens.size])
+       }
+
+       if tokens[ptr].token == ")"
+	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+	 ptr = ptr+1
+       else
+	 puts "Can't find the closing parenthesis and now I'm left with all this: #{tokens.inspect}"
+       end
+     end
+
      if tokens[ptr].token == "-" or tokens[ptr].token == "~"
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
@@ -658,7 +674,7 @@ class CompilationEngine
   def compileSubroutineCall(tokens)
     puts "compiling subroutineCall"
     ptr = 0
-    puts tokens.inspect
+#     puts tokens.inspect
 #     if tokens[ptr].tag == :identifier
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 #       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
@@ -719,21 +735,21 @@ class CompilationEngine
      puts "compiling ExpressionList"
      ptr = 0
 
-     puts tokens.inspect
+#      puts tokens.inspect
      if tokens[ptr].token != ")"
        @xml.expression{
-	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	 ptr = ptr + compileExpression(tokens[ptr...tokens.size])
        }
 
        while tokens[ptr].token == ","
-	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 
 	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	 ptr = ptr+1
 
 	 @xml.expression{
-	   puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+# 	   puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	   ptr = ptr + compileExpression(tokens[ptr...tokens.size])
 	 }
        end
