@@ -1,8 +1,37 @@
 # Associates identifier names w/ identifier properties needed for compilation (ie. type,kind, index)
 class SymbolTable
+  attr_accessor :classSymbol, :methodSymbol, :thisLabel
   
   #creates empty symbol table
   def initialize
+    @classSymbol = []
+    @methodSymbol = []
+    thisLabel = ""
+  end
+    
+  def addToTable(name,type,kind,num,whichTable)
+    temp = [name,type,kind,num]
+    
+    if whichTable == :class
+      @classSymbol.push(temp)
+    elsif whichTable == :method
+      @methodSymbol.push(temp)
+    else
+      puts "#{whichTable} is not a valid type.  Error on #{temp.inspect}"
+    end
+    
+  end
+  
+  def printTables
+    puts "Class table of symbols"
+    @classSymbol.each do |x|
+      puts "#{x.inspect}"
+    end
+    
+    puts "\nMethod table of symbols"
+    @methodSymbol.each do |x|
+      puts "#{x.inspect}"
+    end
   end
   
   #start new subroutine scope (reset subroutine symbol table)
