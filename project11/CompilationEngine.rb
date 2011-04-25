@@ -1,5 +1,5 @@
 require 'Node'
-require 'ruby-debug'
+# require 'ruby-debug'
 require 'SymbolTable'
 
 # In the first version of the compiler, described in Chapter 10, this module emits a structured printout of the code, wrapped in XML tags. In the final version of the compiler, described in Chapter 11, this module generates executable VM code.
@@ -48,8 +48,10 @@ class CompilationEngine
 
     @currentElement = ["class"]
     @symbolTable = SymbolTable.new
+       
 #     @write = outputFile
 #    puts tokens.class
+    
     if tokens[0].token == "class" then
       @xml.class {
 	@xml.tag!(tokens[0].tag,  " class ")
@@ -60,7 +62,6 @@ class CompilationEngine
     else puts "Syntax error: #{tokens[0].token}"
     end
 
-    @symbolTable.printTables
   end
 
 
@@ -69,39 +70,43 @@ class CompilationEngine
     puts "Compiling class"
     ptr = 0
 
-      if tokens[ptr].tag == :identifier then
-	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+    if tokens[ptr].tag == :identifier then
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 
-	puts "#{tokens[ptr].token.class}"
+      puts "#{tokens[ptr].token.class}"
 
-	@symbolTable.thisLabel = tokens[ptr].token
-	ptr = ptr+1
-      end
-
-
-      if tokens[ptr].token == "{" then
-	@xml.tag!(tokens[ptr].tag, " { ")
-	ptr = ptr+1
-      end
+      @symbolTable.thisLabel = tokens[ptr].token
+      ptr = ptr+1
+    end
 
 
-      while @classVarDecStart.include?(tokens[ptr].token)
-	@xml.classVarDec {
-	  ptr = ptr + compileClassVarDec(tokens[ptr...tokens.size])
-	}
-      end
-
-      while @subroutineDecStart.include?(tokens[ptr].token)
-	@xml.subroutineDec {
-	  ptr = ptr + compileSubroutine(tokens[ptr...tokens.size])
-	}
-      end
+    if tokens[ptr].token == "{" then
+      @xml.tag!(tokens[ptr].tag, " { ")
+      ptr = ptr+1
+    end
 
 
-      if tokens[ptr].token == "}" then
-	@xml.tag!(tokens[ptr].tag, " } ")
-	ptr = ptr+1
-      end
+    while @classVarDecStart.include?(tokens[ptr].token)
+      @xml.classVarDec {
+	ptr = ptr + compileClassVarDec(tokens[ptr...tokens.size])
+      }
+    end
+
+#     puts @symbolTable.printTable
+    
+    while @subroutineDecStart.include?(tokens[ptr].token)
+      @xml.subroutineDec {
+	ptr = ptr + compileSubroutine(tokens[ptr...tokens.size])
+      }
+    end
+    
+    @symbolTable.printTable(:class)
+    @symbolTable.printTable(:method)
+    
+    if tokens[ptr].token == "}" then
+      @xml.tag!(tokens[ptr].tag, " } ")
+      ptr = ptr+1
+    end
 
 
     if ptr > tokens.size then
@@ -126,12 +131,13 @@ class CompilationEngine
 #       static
       if @classVarDecStart.include?(tokens[ptr].token)
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-	ptr = ptr+1
 	kind = tokens[ptr].token
+	ptr = ptr+1
+	
       end
 
 #       int
-      if @typeStart.include?(tokens[ptr].token) then
+      if @typeStart.include?(tokens[ptr].token) or tokens[ptr].tag == :identifier then
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	type = tokens[ptr].token
 	ptr = ptr+1
@@ -143,7 +149,7 @@ class CompilationEngine
 	ptr = ptr+1
       end
 
-      @symbolTable.addToTable(name,type,kind,:class)
+      @symbolTable.addToTable(name,type,kind)
 
       while tokens[ptr].token == ","
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
@@ -172,18 +178,17 @@ class CompilationEngine
     puts "compiling SubroutineDec"
     ptr = 0
 
-    name = "this"
-    type = @symbolTable.thisLabel
-    kind = "argument"
-
-    puts name,type,kind
-    @symbolTable.addToTable(name, type, kind, :method)
-
+   @symbolTable.startSubroutine 
+  name = "this"
+  type = @symbolTable.thisLabel
+  kind = "argument"
+  
     #constructor, method, function ,etc
     if @subroutineDecStart.include?(tokens[ptr].token)
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	if tokens[ptr].token == "method" then
 	    @methodHit = true
+	    
 	else
 	   @methodHit = false
 	end
@@ -194,20 +199,23 @@ class CompilationEngine
     # void, int, etc
     if @typeStart.include?(tokens[ptr].token) or tokens[ptr].token == "void" or tokens[ptr].tag == :identifier
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-      type = tokens[ptr].token
+#       type = tokens[ptr].token
       ptr = ptr+1
     end
 
 #     function name
     if tokens[ptr].tag == :identifier
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-      name = tokens[ptr].token
+#       name = tokens[ptr].token
       ptr = ptr+1
     end
 
-    @symbolTable.addToTable(name,type,kind,:method)
+    if @methodHit then  
+      @symbolTable.addToTable(name, type, kind)
+    end
+#     @symbolTable.addToTable(name,type,kind)
 
-# 	   parameter list
+#	parameter list
     if tokens[ptr].token == "(" then
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
@@ -276,8 +284,8 @@ class CompilationEngine
     kind = "argument"
 
     while tokens[ptr].token != ")"
-# 	   data type
-      if @typeStart.include?(tokens[ptr].token) then
+    # 	   data type
+      if @typeStart.include?(tokens[ptr].token) or tokens[ptr].tag == :identifier then
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 
 	if @methodHit then
@@ -288,84 +296,119 @@ class CompilationEngine
       end
 
       if tokens[ptr].tag == :identifier then
-	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 
-	if @methodHit then
-	  name = tokens[ptr].token
-	end
-
-	ptr = ptr+1
+      if @methodHit then
+	name = tokens[ptr].token
       end
 
-      @symbolTable.addToTable(name,type,kind,:method)
+      ptr = ptr+1
+    end
+
+      @symbolTable.addToTable(name,type,kind)
 
       while tokens[ptr].token == ","
+	
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	ptr = ptr+1
 
-	 if tokens[ptr].tag == :identifier then
+	if @typeStart.include?(tokens[ptr].token) or tokens[ptr].tag == :identifier then
 	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-	  name = tokens[ptr].token
-	  @symbolTable.addToTable(name,type,kind,:method)
+
+	  if @methodHit then
+	    type = tokens[ptr].token
+	  end
+
+	  ptr = ptr+1
+	end
+
+	if tokens[ptr].tag == :identifier then
+	  @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+	  if @methodHit then
+	    name = tokens[ptr].token
+	    @symbolTable.addToTable(name,type,kind)
+	  end
+
 	  ptr = ptr+1
 	end
       end
-
     end
 
     puts "finished ParameterList"
     return ptr
   end
 
-#   Compiles a var declaration.
+  #   Compiles a var declaration.
   def compileVarDec(tokens)
     puts "compiling VarDec"
     ptr = 0
 
+    name = ""
+    type = ""
+    kind = ""
+
     if tokens[ptr].token == "var" then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+  #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      if @methodHit then
+	kind = tokens[ptr].token
+      end
+
       ptr = ptr+1
     end
 
     if @typeStart.include?(tokens[ptr].token) or tokens[ptr].tag == :identifier then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+    #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      if @methodHit then
+	type = tokens[ptr].token
+      end
+
       ptr = ptr+1
     end
 
     if tokens[ptr].tag == :identifier then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+    #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      if @methodHit then
+	name = tokens[ptr].token
+      end
+
       ptr = ptr+1
     end
 
+    @symbolTable.addToTable(name,type,kind)
+
     while tokens[ptr].token ==","
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+  #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
 
-      if @typeStart.include?(tokens[ptr].token) then
-# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
-	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-	ptr = ptr+1
-      end
-
       if tokens[ptr].tag == :identifier then
-# 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+      # 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+	if @methodHit then
+	  name = tokens[ptr].token
+	  @symbolTable.addToTable(name,type,kind)
+	end
+
 	ptr = ptr+1
       end
     end
 
     if tokens[ptr].token == ";" then
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+    #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
 
-     puts "finished VarDec"
-     return ptr
+    puts "finished VarDec"
+    return ptr
   end
 
 #   Compiles a sequence of statements, not including the enclosing “{}”.
@@ -762,7 +805,7 @@ class CompilationEngine
   end
 
 
-  # compiles a (possibly empty) comma-separated list of expressions
+# compiles a (possibly empty) comma-separated list of expressions
   def compileExpressionList(tokens)
      puts "compiling ExpressionList"
      ptr = 0
@@ -773,7 +816,6 @@ class CompilationEngine
 # 	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	 ptr = ptr + compileExpression(tokens[ptr...tokens.size])
        }
-
        while tokens[ptr].token == ","
 # 	 puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 
@@ -785,7 +827,6 @@ class CompilationEngine
 	   ptr = ptr + compileExpression(tokens[ptr...tokens.size])
 	 }
        end
-
      else
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
@@ -794,5 +835,7 @@ class CompilationEngine
      puts "finished ExpressionList"
      return ptr
   end
-
+     
 end
+  
+  
