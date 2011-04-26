@@ -67,7 +67,7 @@ class JackTokenizer
     print "\nWill be writing parsed version of the file to #{part2}\n\n"
 
 #     puts tokensArray.inspect
-    compiler = CompilationEngine.new(tokensArray[0...tokensArray.size],@parseTokensFile)
+    compiler = CompilationEngine.new(tokensArray[0...tokensArray.size],@parseTokensFile,inputFileName)
     outputFile2.close
   end
 

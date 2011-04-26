@@ -1,13 +1,14 @@
 require 'Node'
 # require 'ruby-debug'
 require 'SymbolTable'
+require 'VMWriter'
 
 # In the first version of the compiler, described in Chapter 10, this module emits a structured printout of the code, wrapped in XML tags. In the final version of the compiler, described in Chapter 11, this module generates executable VM code.
 class CompilationEngine
 
 #   Creates a new compilation engine with the given input and output. The next routine called must be compileClass().
-#   def initialize(tokens,xmlFile,outputFile)
-   def initialize(tokens,xmlFile)
+  def initialize(tokens,xmlFile,outputFile)
+#    def initialize(tokens,xmlFile)
     @xml = xmlFile
 
     @classVarDecStart = [
@@ -46,12 +47,12 @@ class CompilationEngine
       '=',
       ]
 
-    @currentElement = ["class"]
+    @currentMethod = ""
     @symbolTable = SymbolTable.new
-       
+    @vm = VMWriter.new(outputFile)
 #     @write = outputFile
 #    puts tokens.class
-    
+
     if tokens[0].token == "class" then
       @xml.class {
 	@xml.tag!(tokens[0].tag,  " class ")
@@ -73,7 +74,6 @@ class CompilationEngine
     if tokens[ptr].tag == :identifier then
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 
-      puts "#{tokens[ptr].token.class}"
 
       @symbolTable.thisLabel = tokens[ptr].token
       ptr = ptr+1
@@ -93,16 +93,16 @@ class CompilationEngine
     end
 
 #     puts @symbolTable.printTable
-    
+
     while @subroutineDecStart.include?(tokens[ptr].token)
       @xml.subroutineDec {
 	ptr = ptr + compileSubroutine(tokens[ptr...tokens.size])
       }
     end
-    
-    @symbolTable.printTable(:class)
-    @symbolTable.printTable(:method)
-    
+
+#     @symbolTable.printTable(:class)
+#     @symbolTable.printTable(:method)
+
     if tokens[ptr].token == "}" then
       @xml.tag!(tokens[ptr].tag, " } ")
       ptr = ptr+1
@@ -133,7 +133,7 @@ class CompilationEngine
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	kind = tokens[ptr].token
 	ptr = ptr+1
-	
+
       end
 
 #       int
@@ -178,17 +178,17 @@ class CompilationEngine
     puts "compiling SubroutineDec"
     ptr = 0
 
-   @symbolTable.startSubroutine 
-  name = "this"
-  type = @symbolTable.thisLabel
-  kind = "argument"
-  
+    @symbolTable.startSubroutine
+    name = "this"
+    type = @symbolTable.thisLabel
+    kind = "argument"
+
     #constructor, method, function ,etc
     if @subroutineDecStart.include?(tokens[ptr].token)
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	if tokens[ptr].token == "method" then
 	    @methodHit = true
-	    
+
 	else
 	   @methodHit = false
 	end
@@ -206,11 +206,16 @@ class CompilationEngine
 #     function name
     if tokens[ptr].tag == :identifier
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      if @methodHit then
+	@currentMethod = tokens[ptr].token
+      end
 #       name = tokens[ptr].token
       ptr = ptr+1
     end
 
-    if @methodHit then  
+    if @methodHit then
+      puts name,type,kind
       @symbolTable.addToTable(name, type, kind)
     end
 #     @symbolTable.addToTable(name,type,kind)
@@ -228,6 +233,16 @@ class CompilationEngine
       ptr = ptr+1
     end
 
+
+    if @methodHit then
+      functionName = "#{@symbolTable.method_table[0][1]}.#{@currentMethod}"
+      count = @symbolTable.varCount("argument")
+      @vm.writeFunction(functionName, count)
+      for i in 0...count.to_i
+	@vm.writePush("local","0")
+      end
+#       puts functionName
+    end
 
 
 #     ptr = ptr + 1
@@ -308,7 +323,7 @@ class CompilationEngine
       @symbolTable.addToTable(name,type,kind)
 
       while tokens[ptr].token == ","
-	
+
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
 	ptr = ptr+1
 
@@ -835,7 +850,7 @@ class CompilationEngine
      puts "finished ExpressionList"
      return ptr
   end
-     
+
 end
-  
-  
+
+

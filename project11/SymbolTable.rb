@@ -1,15 +1,15 @@
 # Associates identifier names w/ identifier properties needed for compilation (ie. type,kind, index)
 class SymbolTable
-  attr_accessor :thisLabel
-  
+  attr_accessor :thisLabel, :method_table
+
   #creates empty symbol table
   def initialize
     @class_table = []
     @class_kind_num = {}
-        
+
     @method_table = []
     @method_kind_num = {}
-    
+
     @thisLabel = ""
   end
 
@@ -27,7 +27,7 @@ class SymbolTable
 
       temp = [name,type,kind,@method_kind_num[kind]]
       @method_table.push(temp)
-    
+
     elsif kind =="static" or kind == "field" then
       if @class_kind_num.has_key?(kind)
 	  @class_kind_num[kind] = @class_kind_num[kind] +1
@@ -37,41 +37,41 @@ class SymbolTable
 
       temp = [name,type,kind,@class_kind_num[kind]]
       @class_table.push(temp)
-	
+
     else
       puts "#{kind} is not a valid kind"
-    end  
+    end
   end
 
   def printTable(whichTable)
     puts
     puts "Printing #{whichTable.to_s} table"
-      
+
     if whichTable == :class
       for i in 0...@class_table.size
 	puts @class_table[i].inspect
       end
-      
+
     elsif whichTable == :method
       for i in 0...@method_table.size
 	puts @method_table[i].inspect
       end
-      
-    else puts "#{whichTable.to_s} is not a valid table" 
+
+    else puts "#{whichTable.to_s} is not a valid table"
     end
-    
+
     puts
   end
-  
+
   #start new subroutine scope (reset subroutine symbol table)
   def startSubroutine
     if @method_table.empty?
       puts "Already using an empty method_table"
-    
+
     else
       puts "Resetting symbol method_table"
       @method_table = []
-            
+
       @method_kind_num = {}
     end
   end
