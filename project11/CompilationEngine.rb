@@ -100,8 +100,8 @@ class CompilationEngine
       }
     end
 
-#     @symbolTable.printTable(:class)
-#     @symbolTable.printTable(:method)
+    @symbolTable.printTable(:class)
+    @symbolTable.printTable(:method)
 
     if tokens[ptr].token == "}" then
       @xml.tag!(tokens[ptr].tag, " } ")
@@ -179,6 +179,8 @@ class CompilationEngine
     ptr = 0
 
     @symbolTable.startSubroutine
+    @int_array = []
+    @op_array = []
     name = "this"
     type = @symbolTable.thisLabel
     kind = "argument"
@@ -186,7 +188,7 @@ class CompilationEngine
     #constructor, method, function ,etc
     if @subroutineDecStart.include?(tokens[ptr].token)
 	@xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-	if tokens[ptr].token == "method" then
+	if tokens[ptr].token == "method" or tokens[ptr].token == "function"  then
 	    @methodHit = true
 
 	else
@@ -229,6 +231,7 @@ class CompilationEngine
       @xml.parameterList{
 	ptr = ptr + compileParameterList(tokens[ptr...tokens.size])
       }
+
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
@@ -237,14 +240,10 @@ class CompilationEngine
     if @methodHit then
       functionName = "#{@symbolTable.method_table[0][1]}.#{@currentMethod}"
       count = @symbolTable.varCount("argument")
-      @vm.writeFunction(functionName, count)
-      for i in 0...count.to_i
-	@vm.writePush("local","0")
-      end
-#       puts functionName
+
     end
 
-
+    @vm.writeFunction(functionName, count)
 #     ptr = ptr + 1
     @xml.subroutineBody {
       ptr = ptr + compileSubroutineBody(tokens[ptr...tokens.size])
@@ -253,7 +252,40 @@ class CompilationEngine
     }
 #     end
 
+
     puts "finished SubroutineDec"
+
+    temp=0
+    prev_op = false
+    for i in 0...@op_array.size
+      if @vm.binaryOp_table.has_key?(@op_array[i]) then
+	if !prev_op then
+	  @vm.writePush("constant",@int_array[temp])
+	  @vm.writePush("constant",@int_array[temp+1])
+	  @vm.writeArithmetic(@vm.binaryOp_table[@op_array[i]])
+	  prev_op = true
+	  temp = temp+2
+	else
+	  @vm.writePush("constant",@int_array[temp])
+	  @vm.writeArithmetic(@vm.binaryOp_table[@op_array[i]])
+	  temp = temp+1
+	  if !@int_array.empty?
+	    prev_op = true
+	  else prev_op = false
+	  end
+	end
+
+      elsif @vm.unaryOp_table.has_key?(@op_array[i]) then
+	@vm.writePush("constant",@int_array[temp])
+	@vm.writeArithmetic(@vm.unaryOp_table[@op_array[i]])
+	temp = temp+1
+      end
+#       temp = temp+1
+    end
+
+    @vm.writePush("constant", "0")
+                  @vm.writeReturn
+
     return ptr
   end
 
@@ -462,6 +494,8 @@ class CompilationEngine
 
 #     puts tokens.inspect
 #     puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
+
+#     do function.call
     @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
     ptr = ptr+1
 
@@ -671,18 +705,26 @@ class CompilationEngine
 
     while @operands.include?(tokens[ptr].token)
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      if @vm.binaryOp_table.has_key?(tokens[ptr].token) then
+	@op_array.push(tokens[ptr].token)
+      end
       ptr = ptr+1
 
       @xml.term{
 	ptr = ptr + compileTerm(tokens[ptr...tokens.size])
       }
+
     end
 
+    @op_array = @op_array.reverse
+    puts @op_array.inspect
+    puts @int_array.inspect
     puts "finished expression"
     return ptr
   end
 
-  # compiles a term.  This routine is faced w/ a slight difficulty when trying to decide b/w some of the alternative parsing rules.  Specifically, if the current token is an identifier, the routine must distinguish b/w a variable/array entry & subroutine  call.  A signle lookahead token, which may be one of "[",string "(", or "." suffices to distinguish b/w the 3 possibilities.  Any other token is not art of this term & shouldn't be advanced over
+  # compiles a term.  This routine is faced w/ a slight difficulty when trying to decide b/w some of the alternative parsing rules.  Specifically, if the current token is an identifier, the routine must distinguish b/w a variable/array entry & subroutine  call.  A single lookahead token, which may be one of "[",string "(", or "." suffices to distinguish b/w the 3 possibilities.  Any other token is not art of this term & shouldn't be advanced over
   def compileTerm(tokens)
      puts "compiling Term"
      ptr = 0
@@ -691,6 +733,7 @@ class CompilationEngine
 #        debugger
        if (0..32767).include?(tokens[ptr].token.to_i)
 	 @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+	 @int_array.push(tokens[ptr].token)
        else
 	 puts "While compiling term #{tokens[ptr].token}, I noticed that it's not a valid integer constant!"
        end
@@ -699,6 +742,7 @@ class CompilationEngine
 
      while tokens[ptr].tag == :stringConstant
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
       ptr = ptr+1
      end
 
@@ -752,6 +796,7 @@ class CompilationEngine
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
 
+       @op_array.push(tokens[ptr].token)
        @xml.term{
 	 ptr = ptr + compileTerm(tokens[ptr...tokens.size])
        }
@@ -764,11 +809,6 @@ class CompilationEngine
   def compileSubroutineCall(tokens)
     puts "compiling subroutineCall"
     ptr = 0
-#     puts tokens.inspect
-#     if tokens[ptr].tag == :identifier
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
-#       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
-#       ptr = ptr+1
 
     if tokens[ptr].token == "("
       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
@@ -849,6 +889,13 @@ class CompilationEngine
 
      puts "finished ExpressionList"
      return ptr
+  end
+
+  def codeWriter(exp)
+    if exp.class == "Integer" then
+      @vm.writePush("constant",exp.to_s)
+#     elsif exp
+    end
   end
 
 end

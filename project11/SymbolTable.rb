@@ -10,6 +10,7 @@ class SymbolTable
     @method_table = []
     @method_kind_num = {}
 
+    @total_table = {}
     @thisLabel = ""
   end
 
@@ -70,6 +71,7 @@ class SymbolTable
 
     else
       puts "Resetting symbol method_table"
+      @total_table[@this_label] = @method_table
       @method_table = []
 
       @method_kind_num = {}

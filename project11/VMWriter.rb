@@ -1,9 +1,22 @@
 # write VM command to file using VM command syntax
 class VMWriter
-
+  attr_accessor :binaryOp_table, :unaryOp_table
   # create new file & open for writing
   def initialize(name)
 
+    @binaryOp_table = {
+      "+" => "add",
+
+      "&" => "and",
+      "|" => "or",
+      "*" => "call Math.multiply 2\npop temp 0",
+      "/" => "call Math.divide 2\npop temp 0"
+    }
+
+    @unaryOp_table = {
+      "-" => "neg",
+      "~" => "not",
+    }
     new_name = File.basename(name,".jack") + ".compiled.vm"
 
     dirname = name.gsub(/\w*\.\w*/,'')
