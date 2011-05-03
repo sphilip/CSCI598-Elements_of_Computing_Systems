@@ -1,22 +1,34 @@
 # write VM command to file using VM command syntax
 class VMWriter
-  attr_accessor :binaryOp_table, :unaryOp_table
+  attr_accessor :op_table, :unaryOp_table, :binaryOp_table
   # create new file & open for writing
   def initialize(name)
 
     @binaryOp_table = {
       "+" => "add",
-
       "&" => "and",
       "|" => "or",
-      "*" => "call Math.multiply 2\npop temp 0",
-      "/" => "call Math.divide 2\npop temp 0"
+      "*" => "call Math.multiply 2",
+      "/" => "call Math.divide 2"
     }
 
     @unaryOp_table = {
       "-" => "neg",
       "~" => "not",
     }
+
+
+    @op_table = {
+      "+" => "add",
+      "&" => "and",
+      "|" => "or",
+      "*" => "call Math.multiply 2",
+      "/" => "call Math.divide 2",
+      "-" => "neg",
+      "~" => "not",
+      }
+
+
     new_name = File.basename(name,".jack") + ".compiled.vm"
 
     dirname = name.gsub(/\w*\.\w*/,'')
@@ -40,7 +52,9 @@ class VMWriter
   # write arithmetic command
   # input: command (add,sub,etc)
   def writeArithmetic(command)
-    @write.puts "#{command}"
+    if @op_table.include?(command)
+      @write.puts "#{@op_table[command]}"
+    end
   end
 
   # write label
@@ -63,7 +77,8 @@ class VMWriter
   # write call
   # input: name (string), number of args (int)
   def writeCall (name, numArg)
-    @write.puts "call #{name} #{numArg}"
+    @write.puts "call #{name} #{numArg.to_s}"
+    @write.puts "pop temp 0"
   end
 
   # write function

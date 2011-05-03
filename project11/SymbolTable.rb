@@ -78,7 +78,7 @@ class SymbolTable
     end
   end
 
-  # defines new identifier of given name, type , kind & assign running index
+  # defines new identifier of given name, type, kind & assign running index
   # static, field = class scope
   # arg, var = subroutine scope
   # input: name (string), type (string), kind (static,field,etc)
@@ -102,20 +102,39 @@ class SymbolTable
   # input: name (string)
   # output: static,field,arg,var,none
   def kindOf(name)
-    for i in 0...@table.size
-      if @table[i][0] == name
-	return @table[i][2]
+    kind = ""
+    for i in 0...@class_table.size
+      if @class_table[i][0] == name
+	kind = @class_table[i][2]
       end
     end
+
+    for i in 0...@method_table.size
+      if @method_table[i][0] == name
+	kind = @method_table[i][2]
+      end
+    end
+
+    if kind == "var" then return "local"
+    elsif kind == "field" then return "this"
+    else return "none"
+    end
+
   end
 
   # return type of named identifier
   # input: name (string)
   # output: string
   def typeOf (name)
-    for i in 0...@table.size
-      if @table[i][0] == name
-	return @table[i][1]
+    for i in 0...@class_table.size
+      if @class_table[i][0] == name
+	return @class_table[i][1]
+      end
+    end
+
+    for i in 0...@method_table.size
+      if @method_table[i][0] == name
+	return @method_table[i][1]
       end
     end
   end
@@ -124,11 +143,18 @@ class SymbolTable
   # input: name (string)
   # output: int
   def indexOf (name)
-    for i in 0...@table.size
-      if @table[i][0] == name
-	return @table[i][3]
+    for i in 0...@class_table.size
+      if @class_table[i][0] == name
+	return @class_table[i][3]
       end
     end
+
+    for i in 0...@method_table.size
+      if @method_table[i][0] == name
+	return @method_table[i][3]
+      end
+    end
+
   end
 
 end
