@@ -2,12 +2,15 @@
 
 TEST=("MathTest/")
 DONE=("Math.jack")
-JACK="bash /home/satellite/Desktop/CSCI598/cs598/tools/JackCompiler.sh"
-DIR=`pwd`
+
+DIR=`echo $HOME`
+WD=`pwd`
+CSCI="/Desktop/CSCI598/cs598/"
+JACK="bash $HOME/Desktop/CSCI598/cs598/tools/JackCompiler.sh"
 
 for index in 0
 do
-$JACK $DIR/${TEST[$index]}
-$JACK $DIR/${DONE[$index]}
-`cp *.vm $DIR/${TEST[$index]}`
+    $JACK $WD/${TEST[$index]}
+    $JACK $WD/${DONE[$index]}
+    mv *.vm $WD/${TEST[$index]}
 done
