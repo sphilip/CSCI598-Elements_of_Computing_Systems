@@ -9,10 +9,10 @@ end
 
 class NodeTree
   attr_accessor :tree, :ptr
-  
-  def initialize
-    @tree = []
-    @ptr = 0
+
+  def initialize(tree=nil)
+      @tree = []
+      @ptr = 0
   end
 
   def addToTree(n)
@@ -31,6 +31,7 @@ class NodeTree
 
   def addBulkToTree(t)
     t.each do |node|
+      puts node.class
       @tree.push(node)
     end
   end
@@ -40,11 +41,11 @@ class NodeTree
       puts "#{node.token} => #{node.tag}"
     end
   end
-  
+
   def nextNode
     return @tree[@ptr+1]
   end
-  
+
   def currentNode
     return @tree[@ptr]
   end

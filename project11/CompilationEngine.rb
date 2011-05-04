@@ -7,7 +7,7 @@ require 'VMWriter'
 class CompilationEngine
 
 #   Creates a new compilation engine with the given input and output. The next routine called must be compileClass().
-  def initialize(tokens,xmlFile,outputFile)
+  def initialize(tokens,xmlFile=nil,outputFile=nil)
 #    def initialize(tokens,xmlFile)
     @xml = xmlFile
 
@@ -51,7 +51,9 @@ class CompilationEngine
 
     @currentMethod = ""
     @symbolTable = SymbolTable.new
-    @vm = VMWriter.new(outputFile)
+    if !outputFile.nil?
+      @vm = VMWriter.new(outputFile)
+
 #     @write = outputFile
 #    puts tokens.class
 
@@ -64,7 +66,7 @@ class CompilationEngine
 
     else puts "Syntax error: #{tokens[0].token}"
     end
-
+    end
   end
 
 
@@ -444,9 +446,7 @@ class CompilationEngine
   def compileStatement(tokens)
     ptr = 0
 
-#     @int_array = []
-#     @op_array = []
-puts "Init arrays"
+
 
     case tokens[0].token
       when "let" then @xml.letStatement{ ptr = ptr + compileLet(tokens)}
@@ -456,36 +456,6 @@ puts "Init arrays"
       when "return" then @xml.returnStatement{ ptr = ptr + compileReturn(tokens)}
       else puts "#{tokens[0].token} is not a valid statement"
     end
-
-puts "write ops"
-#     temp=0
-#     prev_op = false
-#
-#     for i in 0...@op_array.size
-#       if @vm.binaryOp_table.has_key?(@op_array[i]) then
-# 	if !prev_op then
-# 	  @vm.writePush("constant",@int_array[temp])
-# 	  @vm.writePush("constant",@int_array[temp+1])
-# 	  @vm.writeArithmetic(@vm.binaryOp_table[@op_array[i]])
-# 	  prev_op = true
-# 	  temp = temp+2
-# 	else
-# 	  @vm.writePush("constant",@int_array[temp])
-# 	  @vm.writeArithmetic(@vm.binaryOp_table[@op_array[i]])
-# 	  temp = temp+1
-# 	  if !@int_array.empty?
-# 	    prev_op = true
-# 	  else prev_op = false
-# 	  end
-# 	end
-#
-#       elsif @vm.unaryOp_table.has_key?(@op_array[i]) then
-# 	@vm.writePush("constant",@int_array[temp])
-# 	@vm.writeArithmetic(@vm.unaryOp_table[@op_array[i]])
-# 	temp = temp+1
-#       end
-#       #       temp = temp+1
-#     end
 
     return ptr
   end
@@ -694,29 +664,21 @@ puts "write ops"
     puts "compiling Expression"
     ptr = 0
 
-    if tokens[ptr].tag == :identifier or tokens[ptr].tag == :integerConstant then
-      codeWriter(tokens)
-    end
+
 
     @xml.term{
       ptr = compileTerm(tokens)
     }
 
-
     while @operands.include?(tokens[ptr].token)
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-
       ptr = ptr+1
 
       @xml.term{
 	ptr = ptr + compileTerm(tokens[ptr...tokens.size])
       }
-
     end
 
-#     @op_array = @op_array.reverse
-#     puts @op_array.inspect
-#     puts @int_array.inspect
     puts "finished expression"
     return ptr
   end
@@ -727,10 +689,8 @@ puts "write ops"
      ptr = 0
 
      if tokens[ptr].tag == :integerConstant
-#        debugger
        if (0..32767).include?(tokens[ptr].token.to_i)
 	 @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
-# 	 @int_array.push(tokens[ptr].token)
        else
 	 puts "While compiling term #{tokens[ptr].token}, I noticed that it's not a valid integer constant!"
        end
@@ -816,6 +776,9 @@ puts "write ops"
     if tokens[ptr].token == "("
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+      if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
+	codeWriter(tokens[ptr...tokens.size])
+      end
       ptr = ptr+1
 
       @xml.expressionList{
@@ -843,9 +806,14 @@ puts "write ops"
 	ptr = ptr+1
       end
 
+
       if tokens[ptr].token == "("
 	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+
+	if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
+	  codeWriter(tokens[ptr...tokens.size])
+	end
 	ptr = ptr+1
       end
 
@@ -872,6 +840,9 @@ puts "write ops"
      puts "compiling ExpressionList"
      ptr = 0
 
+     if tokens[ptr].tag == :identifier or tokens[ptr].tag == :integerConstant then
+       codeWriter(tokens)
+     end
 #      puts tokens.inspect
      if tokens[ptr].token != ")"
        @xml.expression{
@@ -897,21 +868,43 @@ puts "write ops"
      return ptr
   end
 
+  def createExp(tokens)
+    exp = []
+    ptr = 0
+    parenthesis = 0
+
+    for i in 0...tokens.size
+      if tokens[ptr].token == "("
+	parenthesis = parenthesis +1
+      elsif tokens[ptr].token == ")"
+	parenthesis = parenthesis -1
+      elsif parenthesis != 0
+	exp.push(tokens[ptr])
+      end
+    end
+
+
+    puts exp.inspect
+    debugger
+  end
+
   def codeWriter(exp)
     ptr = 0
-# puts exp.inspect
 #     debugger
     if exp.length == 1 then
       token = exp[0].token
       tag = exp[0].tag
-#       if exp is a number
+
+#     if exp is a number
       if tag == :integerConstant then
 	@vm.writePush("constant",token)
 	puts "write #{token}"
-# 	if exp is a variable
+
+#     if exp is a variable
       elsif tag == :identifier then
 	@vm.writePush(@symbolTable.kindOf(token),@symbolTable.indexOf(token))
 	puts "write #{token}"
+
       else
 	puts "Can't write appropriate code for #{exp.inspect}"
 	return
@@ -921,26 +914,47 @@ puts "write ops"
       for i in 0...exp.size
 	token = exp[i].token
 	tag = exp[i].tag
-	puts "else #{exp.inspect}"
-# 	if exp begins with op
+
+#       exp = op(exp1)
 	if @operands.include?(token) then
-	  puts "read operand #{token}"
-	  codeWriter(exp[1...exp.size])
+	  new = exp[2...exp.size]
+	  puts "doing #{token}(exp1)", new.inspect
+	  codeWriter(exp[i+2...exp.size-1])
 	  @vm.writeArithmetic(token)
 
-# 	exp = f(exp1...expN)
+#       exp = f(exp1...expN)
 	elsif token == @symbolTable.thisLabel
-	  puts "read name #{token}"
-	  codeWriter(exp[1...exp.size-1])
-	else
-	  codeWriter(exp[1...exp.size])
+	  new = exp[1...exp.size]
+	  puts "doing exp = #{token}(exp1...expN)", new.inspect
+	  codeWriter(exp[i+2...exp.size-1])
+
+#       exp = (exp1 op exp2)
+	elsif exp[i].token == "("
+	  i = i+1
+	  puts "doing exp = (exp1 op exp2)", exp.inspect
+	  found_op = findOp(exp[i...exp.size-1])
+
+	  codeWriter(exp[i...i+found_op])
+	  debugger
+	  i = i+2
+
+	  other_op = findOp(exp[i...exp.size])
+	  @vm.writeArithmetic(exp[i+found_op])
+
+	else return
 	end
-	return
       end
     end
 
   end
 
+  def findOp(exp)
+    ptr = 0
+    while !@vm.op_table.include?(exp[ptr].token) and exp[ptr].token != ")" #exp[ptr].token != "(" and
+      ptr = ptr +1
+    end
+    return ptr
+  end
 end
 
 
