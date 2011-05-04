@@ -48,7 +48,7 @@ class Math {
     let j=0;
     let abs_x = Math.abs(x);
     let abs_y = Math.abs(y);
-    
+  /*  
     do Output.printString("x= ");
     do Output.printInt(x);
     do Output.println();
@@ -56,7 +56,7 @@ class Math {
     do Output.printString("y= ");
     do Output.printInt(y);
     do Output.println();	
-    
+    */
     while (~(j > 16))
     {
       /*
@@ -85,8 +85,52 @@ class Math {
   }
 
     /** Returns the integer part of x/y. */
-    function int divide(int x, int y) {
-      return y;
+    function int divide(int x, int y) 
+    {
+     
+      var int q;
+      let q =0;
+      if (y>x)
+      {
+	do Output.printString("y>x   ret 0");
+	do Output.println();
+	return 0;
+      }
+      
+      let q = x/(y+y);
+      
+      do Output.printString("q= ");
+      do Output.printInt(q);
+      do Output.println();
+     
+      do Output.printString("x= ");
+      do Output.printInt(x);
+      do Output.println();
+      
+      do Output.printString("y= ");
+      do Output.printInt(y);
+      do Output.println();
+      
+      do Output.printString("x-2*q*y= ");
+      do Output.printInt(x-(2*q*y));
+      do Output.println();
+      
+      if ((x-(2*q*y)) < y)
+      {
+	  do Output.printString("ret= ");
+      do Output.printInt(q+q);
+      do Output.println();
+	return (q+q);
+      }
+      
+      else
+      {
+	  do Output.printString("ret= ");
+      do Output.printInt(q+q+1);
+      do Output.println();
+	return (q+q+1);
+      }
+      
     }
 
     /** Returns the integer part of the square root of x. */
