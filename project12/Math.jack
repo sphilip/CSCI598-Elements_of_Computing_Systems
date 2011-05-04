@@ -41,45 +41,47 @@ class Math {
   /** Returns the product of x and y. */
   function int multiply(int x, int y)
   {
-    var int sum, shiftX, j, abs_x, abs_y, binX, binY, maxElement;
+    var int sum, shiftX, j, abs_x, abs_y, temp;
+    let temp=0;
     let sum = 0;
     let shiftX = x;
     let j=0;
-    let maxElement = 16;
     let abs_x = Math.abs(x);
     let abs_y = Math.abs(y);
     
+    do Output.printString("x= ");
+    do Output.printInt(x);
+    do Output.println();
+	
+    do Output.printString("y= ");
+    do Output.printInt(y);
+    do Output.println();	
+    
     while (~(j > 16))
     {
+      /*
       do Output.printString("(abs_y & bin[j])= ");
 	do Output.printInt((abs_y & bin[j]));
 	do Output.println();
-      if ((abs_y & bin[j]) = bin[j])
+	*/
+      if ((y & bin[j]) = bin[j])
       {
 	let sum = sum + shiftX;
-	
+	/*
 	do Output.printString("sum= ");
 	do Output.printInt(sum);
-	do Output.println();
+	do Output.println();*/
       }
 
       let shiftX = shiftX + shiftX;
-      
+      /*
       do Output.printString("shiftX= ");
       do Output.printInt(shiftX);
-      do Output.println();
+      do Output.println();*/
       let j = j+1;
     }
-
-    if ((x<0 & y>0) | (x>0 & y<0))
-    {
-      return -sum;
-    }
-
-    else
-    {
-      return sum;
-    }
+        
+   return sum;
   }
 
     /** Returns the integer part of x/y. */
