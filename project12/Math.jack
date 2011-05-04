@@ -48,16 +48,26 @@ class Math {
     let maxElement = 16;
     let abs_x = Math.abs(x);
     let abs_y = Math.abs(y);
-
+    
     while (~(j > 16))
     {
-      do Output.printInt((abs_y & bin[j]));
-      if ((abs_y & bin[j]) = 1)
+      do Output.printString("(abs_y & bin[j])= ");
+	do Output.printInt((abs_y & bin[j]));
+	do Output.println();
+      if ((abs_y & bin[j]) = bin[j])
       {
 	let sum = sum + shiftX;
+	
+	do Output.printString("sum= ");
+	do Output.printInt(sum);
+	do Output.println();
       }
 
       let shiftX = shiftX + shiftX;
+      
+      do Output.printString("shiftX= ");
+      do Output.printInt(shiftX);
+      do Output.println();
       let j = j+1;
     }
 
