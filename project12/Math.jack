@@ -147,9 +147,61 @@ class Math {
 
     }
 
+function int findIdeal(int x)
+{
+  var int i, n;
+  let i = 0;
+  let n = 0;
+
+  while (i<16)
+  {
+    // 	do Output.printString("i= ");
+    // 	do Output.printInt(i);
+    // 	do Output.println();
+    //
+    // 	do Output.printString("bin= ");
+    // 	do Output.printInt(bin[i]);
+    // 	do Output.println();
+    //
+    if (~(x > bin[i]))
+    {
+      let n = bin[i];
+
+      do Output.printString("bin= ");
+      do Output.printInt(bin[i]);
+      do Output.println();
+      let i=i+1;
+    }
+
+    else
+    {
+      return n;
+    }
+  }
+  return n;
+}
+
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-      return 0;
+      var int n,i,y,j,nj;
+      //let i = 7;
+      let i=0;
+      let y=0;
+      let j=8;
+      let nj = 256;
+
+      while (~(nj<0))
+      {
+	if (~(((y+nj)*(y+nj))>x))
+	{
+	  let y = y + nj;
+	}
+
+	let nj = nj/2;
+      }
+
+      return y;
+
     }
 
     /** Returns the greater number. */
