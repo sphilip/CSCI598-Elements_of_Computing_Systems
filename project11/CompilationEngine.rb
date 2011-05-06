@@ -1,4 +1,5 @@
 require 'Node'
+require 'rubygems'
 require 'ruby-debug'
 require 'SymbolTable'
 require 'VMWriter'
@@ -777,7 +778,8 @@ class CompilationEngine
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
       if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-	codeWriter(tokens[ptr...tokens.size])
+# 	codeWriter(tokens[ptr...tokens.size])
+	createExp(tokens[ptr...tokens.size])
       end
       ptr = ptr+1
 
@@ -812,7 +814,9 @@ class CompilationEngine
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 
 	if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-	  codeWriter(tokens[ptr...tokens.size])
+# 	  codeWriter(tokens[ptr...tokens.size])
+# 	   puts "",tokens[ptr...tokens.size].inspect
+	  createExp(tokens[ptr...tokens.size])
 	end
 	ptr = ptr+1
       end
@@ -841,7 +845,9 @@ class CompilationEngine
      ptr = 0
 
      if tokens[ptr].tag == :identifier or tokens[ptr].tag == :integerConstant then
-       codeWriter(tokens)
+#        codeWriter(tokens)
+#        puts "",tokens[ptr...tokens.size].inspect
+#        createExp(tokens[ptr...tokens.size])
      end
 #      puts tokens.inspect
      if tokens[ptr].token != ")"
@@ -871,90 +877,82 @@ class CompilationEngine
   def createExp(tokens)
     exp = []
     ptr = 0
-    parenthesis = 0
-
+    open_parenthesis = -1
+    closed_parenthesis = 0
+    match = 1	
+    
     for i in 0...tokens.size
-      if tokens[ptr].token == "("
-	parenthesis = parenthesis +1
-      elsif tokens[ptr].token == ")"
-	parenthesis = parenthesis -1
-      elsif parenthesis != 0
-	exp.push(tokens[ptr])
+#       print "#{i}\t#{tokens[i].token}\n"
+       if tokens[i].token == "(" and open_parenthesis == -1
+	open_parenthesis = i
+# 	puts "open_parenthesis = #{open_parenthesis}"
+	match = match+1
+# 	puts "match=#{match}"
+	
+      elsif tokens[i].token == ")"
+	closed_parenthesis = i
+# 	puts "closed_parenthesis = #{closed_parenthesis}"
+	match = match-1
+# 	puts "match=#{match}","found closed"
+	
+	if match == 0 then
+# 	  puts "break", tokens[open_parenthesis...closed_parenthesis].inspect
+	  for j in open_parenthesis...closed_parenthesis
+	    exp.push(tokens[j])
+	  end
+	  break
+	end
+	
+       elsif match == 0
+# 	puts "else", tokens[i].token
+	exp.push(tokens[i])
       end
     end
-
-
-    puts exp.inspect
-    debugger
+    
+#     puts "","",exp.inspect,"",""
+    codeWriter(exp)
   end
-
+  
   def codeWriter(exp)
     ptr = 0
-#     debugger
-    if exp.length == 1 then
-      token = exp[0].token
-      tag = exp[0].tag
-
-#     if exp is a number
-      if tag == :integerConstant then
-	@vm.writePush("constant",token)
-	puts "write #{token}"
-
-#     if exp is a variable
-      elsif tag == :identifier then
-	@vm.writePush(@symbolTable.kindOf(token),@symbolTable.indexOf(token))
-	puts "write #{token}"
-
-      else
-	puts "Can't write appropriate code for #{exp.inspect}"
-	return
-      end
-
-    else
-      for i in 0...exp.size
-	token = exp[i].token
-	tag = exp[i].tag
-
-#       exp = op(exp1)
-	if @operands.include?(token) then
-	  new = exp[2...exp.size]
-	  puts "doing #{token}(exp1)", new.inspect
-	  codeWriter(exp[i+2...exp.size-1])
-	  @vm.writeArithmetic(token)
-
-#       exp = f(exp1...expN)
-	elsif token == @symbolTable.thisLabel
-	  new = exp[1...exp.size]
-	  puts "doing exp = #{token}(exp1...expN)", new.inspect
-	  codeWriter(exp[i+2...exp.size-1])
-
-#       exp = (exp1 op exp2)
-	elsif exp[i].token == "("
-	  i = i+1
-	  puts "doing exp = (exp1 op exp2)", exp.inspect
-	  found_op = findOp(exp[i...exp.size-1])
-
-	  codeWriter(exp[i...i+found_op])
-	  debugger
-	  i = i+2
-
-	  other_op = findOp(exp[i...exp.size])
-	  @vm.writeArithmetic(exp[i+found_op])
-
-	else return
-	end
+    puts "exp= #{exp.inspect}"
+    
+    if exp[ptr].tag == :integerConstant then
+      puts "push constant #{exp[ptr].token}"
+      ptr = ptr+1
+    end
+    
+    if exp[ptr].tag == :identifier then
+      if @symbolTable.hasName(exp[ptr].token)
+      puts "push #{@symbolTable.kindOf(exp[ptr].token)} #{@symbolTable.indexOf(exp[ptr].token)}"
+      ptr = ptr+1
       end
     end
-
-  end
-
-  def findOp(exp)
-    ptr = 0
-    while !@vm.op_table.include?(exp[ptr].token) and exp[ptr].token != ")" #exp[ptr].token != "(" and
-      ptr = ptr +1
+    
+    if exp[ptr].token == "(" then
+      new_exp = createExp(exp)
+      new_ptr = 0
+      op_index = find_op(new_exp)
+     
+      if op_index != -1 then
+	puts "looking into #{new_exp[0...op_index].inspect}", "looking into #{new_exp[op_index...new_exp.size].inspect}",
+	    "#{@vm.op_table[new_exp[op_index]]}"
+      end
     end
-    return ptr
+        
   end
+  
+  def find_op(exp)
+    
+    for i in 0...exp.size
+      if @vm.op_table.has_key?(e.token)
+	return i
+      end
+    end
+    
+    return -1
+  
+  end
+
+   
 end
-
-
