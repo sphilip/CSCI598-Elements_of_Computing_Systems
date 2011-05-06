@@ -1,7 +1,9 @@
 #!/bin/bash
 
-TEST=/home/satellite/Desktop/CSCI598/cs598/src/project11/Seven/
-COMPILE=./../../tools/JackCompiler.sh
+WD=`pwd`
+TEST=$WD/Seven/
+DEF_COMPILE=./../../tools/JackCompiler.sh
 ANALYZE=./JackAnalyzer.rb
+CUSTOM_COMPILE=./JackAnalyzer.rb
 
-$COMPILE $TEST
+$DEF_COMPILE $TEST
