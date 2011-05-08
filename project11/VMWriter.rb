@@ -1,22 +1,8 @@
 # write VM command to file using VM command syntax
 class VMWriter
-  attr_accessor :op_table, :unaryOp_table, :binaryOp_table
+  attr_accessor :op_table, :write
   # create new file & open for writing
   def initialize(name)
-
-    @binaryOp_table = {
-      "+" => "add",
-      "&" => "and",
-      "|" => "or",
-      "*" => "call Math.multiply 2",
-      "/" => "call Math.divide 2"
-    }
-
-    @unaryOp_table = {
-      "-" => "neg",
-      "~" => "not",
-    }
-
 
     @op_table = {
       "+" => "add",
@@ -52,9 +38,9 @@ class VMWriter
   # write arithmetic command
   # input: command (add,sub,etc)
   def writeArithmetic(command)
-    if @op_table.include?(command)
-      @write.puts "#{@op_table[command]}"
-    end
+#     if @op_table.include?(command)
+      @write.puts "#{command}"
+#     end
   end
 
   # write label

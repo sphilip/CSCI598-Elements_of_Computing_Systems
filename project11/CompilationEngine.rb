@@ -777,7 +777,7 @@ class CompilationEngine
 #       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
       if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-	codeWriter(tokens[ptr...tokens.size])
+# 	codeWriter(tokens[ptr...tokens.size])
       end
       ptr = ptr+1
 
@@ -812,7 +812,8 @@ class CompilationEngine
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 
 	if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-	  codeWriter(tokens[ptr...tokens.size])
+# 	  codeWriter(tokens[ptr...tokens.size])
+	  createExp(tokens[ptr...tokens.size])
 	end
 	ptr = ptr+1
       end
@@ -841,7 +842,7 @@ class CompilationEngine
      ptr = 0
 
      if tokens[ptr].tag == :identifier or tokens[ptr].tag == :integerConstant then
-       codeWriter(tokens)
+#        codeWriter(tokens)
      end
 #      puts tokens.inspect
      if tokens[ptr].token != ")"
@@ -871,90 +872,131 @@ class CompilationEngine
   def createExp(tokens)
     exp = []
     ptr = 0
-    parenthesis = 0
-
-    for i in 0...tokens.size
-      if tokens[ptr].token == "("
-	parenthesis = parenthesis +1
-      elsif tokens[ptr].token == ")"
-	parenthesis = parenthesis -1
-      elsif parenthesis != 0
-	exp.push(tokens[ptr])
-      end
+#     if tokens[ptr].token == "("
+#       open_parenthesis = 1
+#     else open_parenthesis = 0
+#     end
+    open_parenthesis = -1
+    closed_parenthesis = 0
+#     match = 0
+    if tokens[ptr].token == "("
+      match = 1
+    else match = 0
     end
 
 
-    puts exp.inspect
-    debugger
+    for i in 0...tokens.size
+      if tokens[i].token == "(" and open_parenthesis == -1
+	open_parenthesis = i
+	match = match+1
+
+      elsif tokens[i].token == ")"
+	closed_parenthesis = i
+	match = match-1
+
+	if match == 0 then
+	  for j in open_parenthesis..closed_parenthesis
+	    exp.push(tokens[j])
+	  end
+	  break
+	end
+
+#       elsif match == 0
+# 	exp.push(tokens[i])
+      end
+    end
+
+#     puts "","",exp.inspect,"",""
+    codeWriter(exp)
   end
 
   def codeWriter(exp)
     ptr = 0
+#     puts "exp= #{exp.inspect}"
 #     debugger
-    if exp.length == 1 then
-      token = exp[0].token
-      tag = exp[0].tag
 
-#     if exp is a number
-      if tag == :integerConstant then
-	@vm.writePush("constant",token)
-	puts "write #{token}"
+    if exp[ptr].token == "(" then
+      exp = exp[ptr+1...exp.size-1]
+    end
 
-#     if exp is a variable
-      elsif tag == :identifier then
-	@vm.writePush(@symbolTable.kindOf(token),@symbolTable.indexOf(token))
-	puts "write #{token}"
+#     debugger
+    while ptr < exp.size
+      if exp[ptr].tag == :integerConstant then
+	puts "push constant #{exp[ptr].token}"
+	@vm.writePush("constant", exp[ptr].token)
+	ptr = ptr+1
+#       end
 
-      else
-	puts "Can't write appropriate code for #{exp.inspect}"
-	return
-      end
-
-    else
-      for i in 0...exp.size
-	token = exp[i].token
-	tag = exp[i].tag
-
-#       exp = op(exp1)
-	if @operands.include?(token) then
-	  new = exp[2...exp.size]
-	  puts "doing #{token}(exp1)", new.inspect
-	  codeWriter(exp[i+2...exp.size-1])
-	  @vm.writeArithmetic(token)
-
-#       exp = f(exp1...expN)
-	elsif token == @symbolTable.thisLabel
-	  new = exp[1...exp.size]
-	  puts "doing exp = #{token}(exp1...expN)", new.inspect
-	  codeWriter(exp[i+2...exp.size-1])
-
-#       exp = (exp1 op exp2)
-	elsif exp[i].token == "("
-	  i = i+1
-	  puts "doing exp = (exp1 op exp2)", exp.inspect
-	  found_op = findOp(exp[i...exp.size-1])
-
-	  codeWriter(exp[i...i+found_op])
-	  debugger
-	  i = i+2
-
-	  other_op = findOp(exp[i...exp.size])
-	  @vm.writeArithmetic(exp[i+found_op])
-
-	else return
+      elsif exp[ptr].tag == :identifier
+	if @symbolTable.hasName(exp[0].token)
+	  puts "push #{@symbolTable.kindOf(exp[0].token)} #{@symbolTable.indexOf(exp[0].token)}"
+	  @vm.writePush(@symbolTable.kindOf(exp[0].token),@symbolTable.indexOf(exp[0].token))
+	  ptr = ptr+1
+	else
+	  puts "#{exp[ptr].token} doesn't seem to be a valid variable name"
+	  return
 	end
+#       end
+
+      elsif @vm.op_table.has_key?(exp[ptr].token) then
+	op_ptr = ptr
+# 	debugger
+	ptr=ptr+1
+	if exp[ptr].tag == :integerConstant then
+	  puts "push constant #{exp[ptr].token}"
+	  @vm.writePush("constant", exp[ptr].token)
+	  ptr = ptr+1
+
+	elsif exp[ptr].tag == :identifier
+	  if @symbolTable.hasName(exp[0].token)
+	    puts "push #{@symbolTable.kindOf(exp[0].token)} #{@symbolTable.indexOf(exp[0].token)}"
+	    @vm.writePush(@symbolTable.kindOf(exp[0].token),@symbolTable.indexOf(exp[0].token))
+	    ptr = ptr+1
+	  else
+	    puts "#{exp[ptr].token} doesn't seem to be a valid variable name"
+	    return
+	  end
+
+	elsif exp[ptr].token == "(" then
+	  codeWriter(exp[ptr+1...exp.size]);
+	  ptr = ptr+1++(ptr+1-exp.size)
+	end
+
+	debugger
+	puts "then #{@vm.op_table[exp[op_ptr].token]}"
+	@vm.writeArithmetic(@vm.op_table[exp[op_ptr].token])
+
+
+	#       end
+
+      elsif exp[ptr].token == "(" then
+	new_e = createExp(exp[ptr+1...exp.size])
+	new_ptr = 0
+	op_index = find_op(new_e)
+
+	if op_index != -1 then
+	  puts "looking into #{new_e[0...op_index].inspect}"
+	  puts "looking into  #{new_e[op_index...new_e.size].inspect}"
+	  puts "#{@vm.op_table[new_e[op_index]]}"
+	end
+	#       end
+
+      else return ptr
+      end
+
+#       return ptr
+
+    end
+  end
+
+  def find_op(exp)
+
+    for i in 0...exp.size
+      if @vm.op_table.has_key?(e.token)
+	return i
       end
     end
 
   end
-
-  def findOp(exp)
-    ptr = 0
-    while !@vm.op_table.include?(exp[ptr].token) and exp[ptr].token != ")" #exp[ptr].token != "(" and
-      ptr = ptr +1
-    end
-    return ptr
   end
-end
-
 

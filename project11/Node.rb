@@ -49,4 +49,8 @@ class NodeTree
   def currentNode
     return @tree[@ptr]
   end
+
+  def size
+    puts @tree.size
+  end
 end
