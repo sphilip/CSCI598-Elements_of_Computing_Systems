@@ -122,6 +122,23 @@ class SymbolTable
 
   end
 
+  def hasName(name)
+    for i in 0...@class_table.size
+      if @class_table[i][0] == name then
+	return true
+      end
+    end
+    
+    for i in 0...@method_table.size 
+      if @method_table[i][0] == name then
+	return true
+      end
+    end
+    
+    return false
+  end
+  
+  
   # return type of named identifier
   # input: name (string)
   # output: string
