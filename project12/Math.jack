@@ -11,7 +11,7 @@ class Math {
   /** Initializes the library. */
   function void init()
   {
-    var int i,element;
+    var int i,element,temp;
     //var Array bin;
     let i=0;
     let element =1;
@@ -147,61 +147,30 @@ class Math {
 
     }
 
-function int findIdeal(int x)
-{
-  var int i, n;
-  let i = 0;
-  let n = 0;
-
-  while (i<16)
-  {
-    // 	do Output.printString("i= ");
-    // 	do Output.printInt(i);
-    // 	do Output.println();
-    //
-    // 	do Output.printString("bin= ");
-    // 	do Output.printInt(bin[i]);
-    // 	do Output.println();
-    //
-    if (~(x > bin[i]))
-    {
-      let n = bin[i];
-
-      do Output.printString("bin= ");
-      do Output.printInt(bin[i]);
-      do Output.println();
-      let i=i+1;
-    }
-
-    else
-    {
-      return n;
-    }
-  }
-  return n;
-}
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-      var int n,i,y,j,nj;
-      //let i = 7;
-      let i=0;
+      var int y,abs_x,element,yjyj;
       let y=0;
-      let j=8;
-      let nj = 256;
+      let abs_x = Math.abs(x);
+      let element = 256;
+      /* 32767 = 181
+      128+32+16+4+1
+      */
 
-      while (~(nj<0))
+      while(element>0)
       {
-	if (~(((y+nj)*(y+nj))>x))
+	let yjyj = (y+element)*(y+element);
+
+	if ((~(yjyj > abs_x)) & (yjyj>0))
 	{
-	  let y = y + nj;
+	  let y = y+element;
 	}
 
-	let nj = nj/2;
+	let element = element/2;
       }
 
       return y;
-
     }
 
     /** Returns the greater number. */
@@ -220,11 +189,11 @@ function int findIdeal(int x)
     function int min(int a, int b) {
       if (a<b)
       {
-	return b;
+	return a;
       }
       else
       {
-	return a;
+	return b;
       }
     }
 }
