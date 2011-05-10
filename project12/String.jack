@@ -17,7 +17,6 @@ class String {
     if (maxLength = 0)
     {
       let str_length = 1;
-      let real_length = 1;
       let str = Array.new(1);
     }
 
@@ -25,8 +24,9 @@ class String {
     {
       let str = Array.new(maxLength);
       let str_length = maxLength;
-      let real_length = maxLength;
     }
+
+    let real_length = 0;
     return this;
   }
 
@@ -40,22 +40,7 @@ class String {
 
     /** Returns the current length of this String. */
     method int length() {
-      var int len,i;
-      let len = -1;
-      let i = 0;
-
-      while(i < str_length)
-      {
-	if (str[i] > 31 & str[i] < 127 & ~(str[i] = 34))
-	{
-	  let len = len +1;
-	}
-
-	let i = i+1;
-      }
-
-      let real_length = len;
-      return len;
+      return real_length;
     }
 
     /** Convertn on-negative # to string */
@@ -92,9 +77,11 @@ return str;
       if (real_length < str_length)
       {
 	let str[real_length] = c;
-	let real_length = real_length+1;
+	let real_length = real_length + 1;
+	return this;
       }
-	return str;
+
+      else return "lolz";
     }
 
     /** Erases the last character from this String. */
