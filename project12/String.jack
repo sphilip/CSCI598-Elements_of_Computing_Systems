@@ -1,5 +1,5 @@
-// This file is part of the materials accompanying the book 
-// "The Elements of Computing Systems" by Nisan and Schocken, 
+// This file is part of the materials accompanying the book
+// "The Elements of Computing Systems" by Nisan and Schocken,
 // MIT Press. Book site: www.idc.ac.il/tecs
 // File name: projects/12/String.jack
 
@@ -7,56 +7,125 @@
  * The String type.
  */
 class String {
+  field Array str;
+  field int str_length;
+  field int real_length;
 
-    /** Constructs a new empty String with a maximum length of
-     *  maxLength. */
-    constructor String new(int maxLength) {
+  /** Constructs a new empty String with a maximum length of
+  *  maxLength. */
+  constructor String new(int maxLength) {
+    if (maxLength = 0)
+    {
+      let str_length = 1;
+      let real_length = 1;
+      let str = Array.new(1);
     }
+
+    else
+    {
+      let str = Array.new(maxLength);
+      let str_length = maxLength;
+      let real_length = maxLength;
+    }
+    return this;
+  }
 
     /** De-allocates the string and frees its space. */
     method void dispose() {
+      let str_length = 0;
+      let real_length = 0;
+      do str.dispose();
+      return;
     }
 
     /** Returns the current length of this String. */
     method int length() {
+      var int len,i;
+      let len = -1;
+      let i = 0;
+
+      while(i < str_length)
+      {
+	if (str[i] > 31 & str[i] < 127 & ~(str[i] = 34))
+	{
+	  let len = len +1;
+	}
+
+	let i = i+1;
+      }
+
+      let real_length = len;
+      return len;
+    }
+
+    /** Convertn on-negative # to string */
+    method String int2String(int n)
+    {
+      var int lastDigit;
+      var String c;
+
+/*      if (n < 10)
+      {
+
+      }*/
+      let lastDigit = n/10;
+      let lastDigit = n - (lastDigit*10);
+      let c = String.new(1);
+return str;
+
+
     }
 
     /** Returns the character at location j. */
     method char charAt(int j) {
+      return str[j];
     }
 
     /** Sets the j'th character of this string to be c. */
     method void setCharAt(int j, char c) {
+      return;
     }
 
     /** Appends the character c to the end of this String.
      *  Returns this string as the return value. */
     method String appendChar(char c) {
+      if (real_length < str_length)
+      {
+	let str[real_length] = c;
+	let real_length = real_length+1;
+      }
+	return str;
     }
 
     /** Erases the last character from this String. */
     method void eraseLastChar() {
+      return;
     }
 
     /** Returns the integer value of this String until the first non
      *  numeric character. */
     method int intValue() {
+      return 0;
     }
 
     /** Sets this String to hold a representation of the given
      *  number. */
     method void setInt(int number) {
+      return;
     }
 
     /** Returns the new line character. */
     function char newLine() {
+      return "a";
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+      return "a";
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+      return "a";
     }
 }
