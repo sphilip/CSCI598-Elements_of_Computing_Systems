@@ -1,14 +1,14 @@
 #!/bin/bash
 
-TEST=("MathTest/")
-DONE=("Math.jack")
+TEST=("MathTest/" "StringTest/")
+DONE=("Math.jack" "String.jack")
 
 DIR=`echo $HOME`
 WD=`pwd`
 CSCI="/Desktop/CSCI598/cs598/"
 JACK="bash $HOME/Desktop/CSCI598/cs598/tools/JackCompiler.sh"
 
-for index in 0
+for index in {0..1}
 do
     $JACK $WD/${TEST[$index]}
     $JACK $WD/${DONE[$index]}
