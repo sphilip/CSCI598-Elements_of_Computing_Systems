@@ -50,7 +50,11 @@ class CompilationEngine
     @call = {}
 
     @currentMethod = ""
+
+    @OS_table = ["Math", "Array", "Output", "Screen", "Keyboard", "Memory" ,"Sys"]
+
     @symbolTable = SymbolTable.new
+
     if !outputFile.nil?
       @vm = VMWriter.new(outputFile)
 
@@ -235,20 +239,14 @@ class CompilationEngine
     end
 
 
-    if @methodHit then
-      functionName = "#{@symbolTable.method_table[0][1]}.#{@currentMethod}"
-      count = @symbolTable.varCount("argument")
-    end
 
-    @vm.writeFunction(functionName, count)
     @xml.subroutineBody {
       ptr = ptr + compileSubroutineBody(tokens[ptr...tokens.size])
     }
 
     puts "finished SubroutineDec"
 
-    @vm.writePush("constant", "0")
-    @vm.writeReturn
+
 
     return ptr
   end
@@ -268,6 +266,14 @@ class CompilationEngine
       }
     end
 
+    if @methodHit then
+      functionName = "#{@symbolTable.method_table[0][1]}.#{@currentMethod}"
+      count = @symbolTable.varCount("var")
+      @symbolTable.printTable(:method)
+    end
+#     debugger
+    @vm.writeFunction(functionName, count)
+
     if tokens[ptr].token != "}" then
       @xml.statements{
 	ptr = ptr + compileStatements(tokens[ptr...tokens.size])
@@ -279,6 +285,8 @@ class CompilationEngine
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
     end
+
+
 
     return ptr
     puts "finished SubroutineBody"
@@ -425,7 +433,7 @@ class CompilationEngine
 #       }
     end
 
-    @vm.writeCall(@possibleCall,@argnum)
+#     @vm.writeCall(@possibleCall,@argnum)
 
     puts "finished Statements"
     return ptr
@@ -436,11 +444,16 @@ class CompilationEngine
 
     case tokens[0].token
       when "let" then @xml.letStatement{ ptr = ptr + compileLet(tokens)}
-      when "if" then @xml.ifStatement{ ptr = ptr + compileIf(tokens)}
+      when "if" then
+
+	@ifLabel = "IF_TRUE"
+	@xml.ifStatement{ ptr = ptr + compileIf(tokens)}
       when "while" then @xml.whileStatement{ ptr = ptr + compileWhile(tokens)}
       when "do" then @xml.doStatement{ ptr = ptr + compileDo(tokens)}
       when "return" then @xml.returnStatement{ ptr = ptr + compileReturn(tokens)}
-      else puts "#{tokens[0].token} is not a valid statement"
+      else
+	puts "#{tokens[0].token} is not a valid statement"
+	return
     end
 
     return ptr
@@ -459,6 +472,10 @@ class CompilationEngine
       ptr = ptr + compileSubroutineCall(tokens[ptr..tokens.size])
     }
 
+    if @subroutine_called then
+      @vm.writePop("temp", 0)
+    end
+
     if tokens[ptr].token == ";"
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
@@ -473,17 +490,22 @@ class CompilationEngine
     puts "compiling Let"
     ptr = 0
 
+    debugger
     @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
 
     if tokens[ptr].tag == :identifier then
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
+      varName = tokens[ptr].token
       ptr = ptr+1
+
     end
 
     if tokens[ptr].token == "[" then
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
+
 
       @xml.expression {
 	ptr = ptr + compileExpression(tokens[ptr...tokens.size])
@@ -498,9 +520,17 @@ class CompilationEngine
       ptr = ptr+1
     end
 
+
+    puts "#{tokens[ptr].inspect}"
+
+#   debugger
     @xml.expression{
       ptr = ptr + compileExpression(tokens[ptr...tokens.size])
       }
+
+    if @subroutine_called then
+      @vm.writePop(@symbolTable.kindOf(varName), @symbolTable.indexOf(varName))
+    end
 
     if tokens[ptr].token == ";" then
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
@@ -515,12 +545,16 @@ class CompilationEngine
   def compileWhile(tokens)
     puts "compiling While"
     ptr =0
+    whileCount = 0
+    whileLabel = "WHILE_EXP" + whileCount.to_s
+    @vm.writeLabel(whileLabel)
 
     @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
       ptr = ptr+1
 
     if tokens[ptr].token == "(" then
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      createExp(tokens[ptr...tokens.size])
       ptr = ptr+1
     end
 
@@ -571,6 +605,9 @@ class CompilationEngine
     end
 
     puts "finished return"
+
+    @vm.writePush("constant", "0")
+    @vm.writeReturn
     return ptr
   end
 
@@ -584,6 +621,8 @@ class CompilationEngine
 
     if tokens[ptr].token == "("
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+      debugger
+      createExp(tokens[ptr...tokens.size])
       ptr = ptr+1
     end
 
@@ -661,6 +700,7 @@ class CompilationEngine
   def compileTerm(tokens)
      puts "compiling Term"
      ptr = 0
+#      debugger
 
      if tokens[ptr].tag == :integerConstant
        if (0..32767).include?(tokens[ptr].token.to_i)
@@ -677,27 +717,36 @@ class CompilationEngine
       ptr = ptr+1
      end
 
-     if @keywordConstant.include?(tokens[ptr].token)
+     if @keywordConstant.include?(tokens[ptr].token) then
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
+
+       if tokens[ptr].token == "true"
+	 @vm.writePush("constant", 0)
+	 @vm.writeArithmetic("not")
+       elsif tokens[ptr].token == "false"
+	 @vm.writePush("constant", 0)
+       end
+
        ptr = ptr+1
      end
 
-     if tokens[ptr].tag == :identifier
+     if tokens[ptr].tag == :identifier then
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
 
-       if tokens[ptr].token == "["
+       if tokens[ptr].token == "[" then
+# 	 ptr = ptr+1
 	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	 ptr = ptr+1
 
 	 ptr = ptr + compileExpression(tokens[ptr...tokens.size])
-
+# let position = position +1
 	 @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	 ptr = ptr+1
 
        elsif tokens[ptr].token == "(" or tokens[ptr].token == "."
 	 @xml.subroutineCall{
-	   ptr = ptr + compileSubroutineCall(tokens[ptr...tokens.size])
+	   ptr = ptr + compileSubroutineCall(tokens[ptr-1...tokens.size])
 	 }
 
 
@@ -738,20 +787,28 @@ class CompilationEngine
     puts "compiling subroutineCall"
     ptr = 0
     puts "Starting subcall"
+    @possibleCall=""
+#     classCall = ""
+    methodCall = ""
+    @subroutine_called = true
+#     debugger
 
     if tokens[ptr].tag == :identifier then
+      puts "I am #{tokens[ptr].token}!"
+
       @xml.tag!(tokens[ptr].tag, " #{tokens[ptr].token} ")
+
       @possibleCall = tokens[ptr].token
+      classCall = tokens[ptr].token
       ptr = ptr+1
       @argnum = 0
     end
 
+#     debugger
     if tokens[ptr].token == "("
-#       puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
       if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-# 	codeWriter(tokens[ptr...tokens.size])
-# 	createExp(tokens[ptr...tokens.size])
+	createExp(tokens[ptr...tokens.size])
       end
       ptr = ptr+1
 
@@ -766,24 +823,22 @@ class CompilationEngine
       end
 
     elsif tokens[ptr].token == "."
-      puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
       @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
       @possibleCall = @possibleCall + "."
       ptr = ptr+1
+      methodCall = methodCall + "."
 
       if tokens[ptr].tag == :identifier
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	@possibleCall = @possibleCall + tokens[ptr].token
+	methodCall = methodCall + tokens[ptr].token
 	ptr = ptr+1
       end
 
       if tokens[ptr].token == "("
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 
 	if tokens[ptr+1].tag == :identifier or tokens[ptr+1].tag == :integerConstant then
-# 	  codeWriter(tokens[ptr...tokens.size])
 	  createExp(tokens[ptr...tokens.size])
 	end
 	ptr = ptr+1
@@ -795,13 +850,19 @@ class CompilationEngine
       }
 
       if tokens[ptr].token == ")"
-	puts "parsing #{tokens[ptr].token} => #{tokens[ptr].tag}"
 	@xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
 	ptr = ptr+1
 	puts "wrote subcall"
       end
     end
 
+#     debugger
+#     @vm.writeCall(@possibleCall,@argnum)
+    #     putargnums "calling #{@possibleCall}"
+    @vm.writeCall(classCall+methodCall,@argnum)
+    puts "calling #{classCall+methodCall} #{@argnum}"
+#     @possibleCall = ""
+    methodCall = ""
     puts "finished with subroutineCall"
     return ptr
   end
@@ -816,7 +877,7 @@ class CompilationEngine
 #        codeWriter(tokens)
 #        createExp(tokens[ptr...tokens.size])
      end
-
+# debugger
      if tokens[ptr].token != ")"
        @xml.expression{
 	@argnum = @argnum +1
@@ -833,7 +894,7 @@ class CompilationEngine
 	   ptr = ptr + compileExpression(tokens[ptr...tokens.size])
 	 }
        end
-
+# debugger
      else
        @xml.tag!(tokens[ptr].tag , " #{tokens[ptr].token} ")
        ptr = ptr+1
@@ -853,8 +914,8 @@ class CompilationEngine
     if tokens[ptr].token == "(" then match = 1
     else match = 0
     end
-
-
+#     match = 0
+# debugger
     for i in 0...tokens.size
       if tokens[i].token == "(" and open_parenthesis == -1
 	open_parenthesis = i
@@ -871,12 +932,13 @@ class CompilationEngine
 	  break
 	end
 
-       elsif match == 0
-	exp.push(tokens[i])
+#        elsif match == 0
+# 	exp.push(tokens[i])
       end
     end
 
     codeWriter(exp)
+#     debugger
   end
 
   def codeWriter(exp)
@@ -901,6 +963,8 @@ class CompilationEngine
 	  puts "push #{@symbolTable.kindOf(exp[ptr].token)} #{@symbolTable.indexOf(exp[ptr].token)}"
 	  @vm.writePush(@symbolTable.kindOf(exp[ptr].token),@symbolTable.indexOf(exp[ptr].token))
 	  ptr = ptr+1
+	elsif @OS_table.include?(exp[ptr].token) then
+	  puts "calling #{exp[ptr].token} #{exp[ptr+1]}"
 	else
 	  puts "#{exp[ptr].token} doesn't seem to be a valid variable name"
 	  return
@@ -909,7 +973,7 @@ class CompilationEngine
 
       elsif @vm.op_table.has_key?(exp[ptr].token) then
 	op_ptr = ptr
-		debugger
+# debugger
 	ptr=ptr+1
 	if exp[ptr].tag == :integerConstant then
 	  puts "push constant #{exp[ptr].token}"
@@ -927,11 +991,12 @@ class CompilationEngine
 	  end
 
 	elsif exp[ptr].token == "(" then
-	  codeWriter(exp[ptr+1...exp.size])
-	  ptr = ptr+1+(ptr+1-exp.size)
+	  ptr = ptr + 1 + codeWriter(exp[ptr+1...exp.size])
+# 	  ptr = ptr+1+(ptr+1-exp.size)
 	  #       end
+
 	end
-	debugger
+# 	debugger
 	# 	end
 
 	puts "then #{@vm.op_table[exp[op_ptr].token]}"
@@ -949,6 +1014,9 @@ class CompilationEngine
 	    puts "#{@vm.op_table[new_e[op_index]]}"
 	  end
 	#       end
+
+      elsif exp[ptr].token == "," then
+	ptr = ptr +1
 
       else return ptr
 	end
