@@ -123,6 +123,7 @@ class SymbolTable
 
     if kind == "var" then return "local"
     elsif kind == "field" then return "this"
+    elsif kind == "argument" or kind = "static" then return kind
     else return "CAN'T FIND TYPE"
     end
 
