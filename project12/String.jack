@@ -44,21 +44,43 @@ class String {
     }
 
     /** Convertn on-negative # to string */
-    method String int2String(int n)
+    method String Int2String(int n)
     {
-      var int lastDigit;
-      var String c;
+      var int lastDigit,div,mult,i;
+      var char c;
+      var String new;
 
-/*      if (n < 10)
+      let div = n/10;
+      let mult = 10*div;
+      let lastDigit = n-mult;
+      let c = str[lastDigit];
+      let new = String.new(str_length);
+
+      if (n < 10)
       {
+	return c-48;
+      }
+      else
+      {
+	let new = Int2String(n/10);
+	let new = new.appendChar(c);
+	return new;
+      }
+    }
 
-      }*/
-      let lastDigit = n/10;
-      let lastDigit = n - (lastDigit*10);
-      let c = String.new(1);
-return str;
+    method int String2Int(String s)
+    {
+      var int v,i,d;
+      let v=0;
+      let i=1;
 
+      while (s.length() > i)
+      {
+	let d = s[i];
+	let v = v*10 + d;
+      }
 
+      return v;
     }
 
     /** Returns the character at location j. */
@@ -81,7 +103,10 @@ return str;
 	return this;
       }
 
-      else return "lolz";
+      else
+      {
+	return "lolz";
+      }
     }
 
     /** Erases the last character from this String. */
@@ -95,24 +120,27 @@ return str;
       return 0;
     }
 
-    /** Sets this String to hold a representation of the given
-     *  number. */
+
+    /** Sets this String to hold a representation of the given number. */
     method void setInt(int number) {
+//       var Sting num;
+      //let this = Int2String(number);
+//     do String2Int();
       return;
     }
 
     /** Returns the new line character. */
     function char newLine() {
-      return "a";
+      return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
-      return "a";
+      return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
-      return "a";
+      return 34;
     }
 }
