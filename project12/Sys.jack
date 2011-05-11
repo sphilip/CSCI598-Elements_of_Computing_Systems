@@ -1,5 +1,5 @@
-// This file is part of the materials accompanying the book 
-// "The Elements of Computing Systems" by Nisan and Schocken, 
+// This file is part of the materials accompanying the book
+// "The Elements of Computing Systems" by Nisan and Schocken,
 // MIT Press. Book site: www.idc.ac.il/tecs
 // File name: projects/12/Sys.jack
 
@@ -10,18 +10,44 @@ class Sys {
 
     /** Makes all required initializations. */
     function void init() {
+      do Keyboard.init();
+      do Math.init();
+      do Memory.init();
+      do Output.init();
+      do Screen.init();
+
+      do Main.main();
+      do Sys.halt();
+      return;
     }
 
     /** Halts the execution. */
     function void halt() {
+      var Boolean i;
+      let i = true;
+      while (i)
+      {
+	let i = true;
+      }
+      return;
     }
 
     /** Waits approximately duration milliseconds before it returns. */
     function void wait(int duration) {
+      var int i;
+      let i=0;
+
+      while (i<600)
+      {
+	let i = i+1;
+      }
+
+      return;
     }
 
     /** prints the given error code in the form "ERR<errorCode>",
      *  and halts. */
     function void error(int errorCode) {
+      return;
     }
 }
