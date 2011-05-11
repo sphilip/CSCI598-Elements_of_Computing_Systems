@@ -1,16 +1,27 @@
 #!/bin/bash
 
-TEST=("MathTest/" "StringTest/")
-DONE=("Math.jack" "String.jack")
+# TEST=(
+# "Math"
+# # "String"
+# "Sys"
+# "Screen"
+# )
+TEST="Test/"
+
+DONE=("Math" "String" "Sys" "Screen")
+EXT=".jack"
 
 DIR=`echo $HOME`
 WD=`pwd`
+
 CSCI="/Desktop/CSCI598/cs598/"
 JACK="bash $HOME/Desktop/CSCI598/cs598/tools/JackCompiler.sh"
 
-for index in {0..1}
+for index in {0..3}
 do
-    $JACK $WD/${TEST[$index]}
-    $JACK $WD/${DONE[$index]}
-    mv *.vm $WD/${TEST[$index]}
+# index=$index-1
+    $JACK $WD/"${DONE[$index]}$TEST"
+    $JACK $WD/"${DONE[$index]}$EXT"
+    mv *.vm $WD/${DONE[$index]}
+    echo Compiled "${DONE[$index]}$EXT"
 done
