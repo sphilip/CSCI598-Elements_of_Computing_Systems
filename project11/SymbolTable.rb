@@ -1,6 +1,6 @@
 # Associates identifier names w/ identifier properties needed for compilation (ie. type,kind, index)
 class SymbolTable
-  attr_accessor :thisLabel, :method_table
+  attr_accessor :thisLabel, :method_table, :total_table
 
   #creates empty symbol table
   def initialize
@@ -90,9 +90,15 @@ class SymbolTable
   # output: int
   def varCount(kind)
     if kind == "static" or kind == "field" then
-      return @class_kind_num[kind]
+      if @class_kind_num.include?(kind) then
+	return @class_kind_num[kind]+1
+      else return 0
+      end
     elsif kind == "argument" or kind == "var" then
-      return @method_kind_num[kind]
+      if @method_kind_num.include?(kind) then
+	return @method_kind_num[kind]+1
+      else return 0
+      end
     else
       puts "#{kind} not a valid kind"
     end
@@ -117,7 +123,7 @@ class SymbolTable
 
     if kind == "var" then return "local"
     elsif kind == "field" then return "this"
-    else return "none"
+    else return "CAN'T FIND TYPE"
     end
 
   end
@@ -128,17 +134,17 @@ class SymbolTable
 	return true
       end
     end
-    
-    for i in 0...@method_table.size 
+
+    for i in 0...@method_table.size
       if @method_table[i][0] == name then
 	return true
       end
     end
-    
+
     return false
   end
-  
-  
+
+
   # return type of named identifier
   # input: name (string)
   # output: string
