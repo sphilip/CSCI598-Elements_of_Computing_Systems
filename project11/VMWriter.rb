@@ -12,6 +12,8 @@ class VMWriter
       "/" => "call Math.divide 2",
       "-" => "neg",
       "~" => "not",
+      ">" => "gt",
+      "<" => "lt"
       }
 
 
@@ -32,7 +34,7 @@ class VMWriter
   # write command for pop
   # input: segment (const,arg,lcl,etc), index (int)
   def writePop(segment, index)
-    @write.puts "push #{segment} #{index}"
+    @write.puts "pop #{segment} #{index}"
   end
 
   # write arithmetic command
@@ -46,7 +48,7 @@ class VMWriter
   # write label
   # input: label (string)
   def writeLabel(label)
-    @write.puts "(#{label})"
+    @write.puts "label #{label}"
   end
 
   # write goto
@@ -64,7 +66,7 @@ class VMWriter
   # input: name (string), number of args (int)
   def writeCall (name, numArg)
     @write.puts "call #{name} #{numArg.to_s}"
-    @write.puts "pop temp 0"
+#     @write.puts "pop temp 0"
   end
 
   # write function
