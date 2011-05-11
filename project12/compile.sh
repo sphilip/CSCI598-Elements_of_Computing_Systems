@@ -22,6 +22,6 @@ do
 # index=$index-1
     $JACK $WD/"${DONE[$index]}$TEST"
     $JACK $WD/"${DONE[$index]}$EXT"
-    mv *.vm $WD/${DONE[$index]}
+    mv *.vm $WD/"${DONE[$index]}$TEST"
     echo Compiled "${DONE[$index]}$EXT"
 done
