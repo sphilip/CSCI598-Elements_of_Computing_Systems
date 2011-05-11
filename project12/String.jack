@@ -111,12 +111,20 @@ class String {
 
     /** Erases the last character from this String. */
     method void eraseLastChar() {
+      var String new;
+      var int i;
+      let i = 0;
+
+      do Output.printString(this);
       return;
     }
 
     /** Returns the integer value of this String until the first non
      *  numeric character. */
     method int intValue() {
+      var int i;
+      let i=0;
+      let i = Int2String(this);
       return 0;
     }
 
