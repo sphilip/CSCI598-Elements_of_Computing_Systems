@@ -34,10 +34,10 @@ class Sys {
 
     /** Waits approximately duration milliseconds before it returns. */
     function void wait(int duration) {
-      var int i;
+      var int i,waitTime;
       let i=0;
-
-      while (i<600)
+let waitTime = 500*duration;
+      while (i<waitTime)
       {
 	let i = i+1;
       }
