@@ -8,11 +8,12 @@
  */
 class Keyboard {
   static char previous;
-  static int cursor;
+  static int col;
 
   /** Initializes the keyboard. */
   function void init() {
     let previous = 0;
+    let col = 512/8;
     return;
   }
 
@@ -83,25 +84,30 @@ class Keyboard {
     var String s;
     var char c;
 
-    let s = "";
+    let s = String.new(col);
     do Output.printString(message);
+//    do Output.printChar(0);
+// do Output.moveCursor(i,j);
 
-    let c = Keyboard.readChar();
-    if (c = 128)
+    while (true)
     {
-      do Output.println();
-      return s;
-    }
+      let c = Keyboard.readChar();
+      if (c = 128)
+      {
+	do Output.println();
+	return s;
+      }
 
-    if ( c = 129 )
-    {
-      do s.eraseLastChar();
-      do Output.backSpace();
-    }
+      if ( c = 129 )
+      {
+	do s.eraseLastChar();
+	do Output.backSpace();
+      }
 
-    else
-    {
-      let s = s.appendChar(c);
+      else
+      {
+	let s = s.appendChar(c);
+      }
     }
     return s;
   }
