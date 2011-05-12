@@ -1,5 +1,5 @@
-// This file is part of the materials accompanying the book 
-// "The Elements of Computing Systems" by Nisan and Schocken, 
+// This file is part of the materials accompanying the book
+// "The Elements of Computing Systems" by Nisan and Schocken,
 // MIT Press. Book site: www.idc.ac.il/tecs
 // File name: projects/12/Keyboard.jack
 
@@ -7,15 +7,19 @@
  * A library for handling user input from the keyboard.
  */
 class Keyboard {
+  static char previous;
+  static int cursor;
 
-    /** Initializes the keyboard. */
-    function void init() {
-    } 
+  /** Initializes the keyboard. */
+  function void init() {
+    let previous = 0;
+    return;
+  }
 
-    /**
-     * Returns the ASCII code (as char) of the currently pressed key,
-     * or 0 if no key is currently pressed.
-     * Recognizes all ASCII characters, and the following extension
+  /**
+  * Returns the ASCII code (as char) of the currently pressed key,
+  * or 0 if no key is currently pressed.
+  * Recognizes all ASCII characters, and the following extension
      * of action keys:
      * New line = 128 = String.newline()
      * Backspace = 129 = String.backspace()
@@ -32,29 +36,62 @@ class Keyboard {
      * ESC = 140
      * F1 - F12 = 141 - 152
      */
-    function char keyPressed() {
+  function char keyPressed() {
+    var int c;
+    let c = Memory.peek(24576);
+
+    if (c<153)
+    {
+      return c;
     }
 
-    /**								
-     * Reads the next character from the keyboard.
-     * waits until a key is pressed and then released, then echoes
-     * the key to the screen, and returns the value of the pressed key.
-     */
-    function char readChar() {
+    else
+    {
+      return -1;
+    }
+  }
+
+  /**
+  * Reads the next character from the keyboard.
+  * waits until a key is pressed and then released, then echoes
+  * the key to the screen, and returns the value of the pressed key.
+  */
+  function char readChar() {
+    var char c;
+    let c = Memory.peek(24576);
+
+    while (c = 0)
+    {
+      let c = Memory.peek(24576);
     }
 
-    /**								
-     * prints the message on the screen and then reads the next line
-     * (until a newline character) from the keyboard and returns its value.
-     */
-    function String readLine(String message) {
-    }   
+let previous = c;
+while ( c = previous )
+{
 
-    /**								
-     * prints the message on the screen and then reads the next line
-     * (until a newline character) from the keyboard and returns its
-     * integer value (until the first non numeric character).
-     */
-    function int readInt(String message) {
-    }
+}
+
+    do Output.printInt(c);
+    return c;
+  }
+
+  /**
+  * prints the message on the screen and then reads the next line
+  * (until a newline character) from the keyboard and returns its value.
+  */
+  function String readLine(String message) {
+    return "lolz";
+  }
+
+  /**
+  * prints the message on the screen and then reads the next line
+  * (until a newline character) from the keyboard and returns its
+  * integer value (until the first non numeric character).
+  */
+  function int readInt(String message) {
+    var String int_msg;
+    let int_msg = Keyboard.readLine(message);
+
+    return int_msg.intValue();
+  }
 }
