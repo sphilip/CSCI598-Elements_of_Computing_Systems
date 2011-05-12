@@ -72,7 +72,7 @@ class Keyboard {
     }
 
     do Output.printChar(previous);
-    return c;
+    return previous;
   }
 
   /**
@@ -80,7 +80,30 @@ class Keyboard {
   * (until a newline character) from the keyboard and returns its value.
   */
   function String readLine(String message) {
-    return "lolz";
+    var String s;
+    var char c;
+
+    let s = "";
+    do Output.printString(message);
+
+    let c = Keyboard.readChar();
+    if (c = 128)
+    {
+      do Output.println();
+      return s;
+    }
+
+    if ( c = 129 )
+    {
+      do s.eraseLastChar();
+      do Output.backSpace();
+    }
+
+    else
+    {
+      let s = s.appendChar(c);
+    }
+    return s;
   }
 
   /**
