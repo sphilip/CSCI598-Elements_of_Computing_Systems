@@ -58,20 +58,20 @@ class Keyboard {
   */
   function char readChar() {
     var char c;
-    let c = Memory.peek(24576);
+    let c = Keyboard.keyPressed();
 
     while (c = 0)
     {
-      let c = Memory.peek(24576);
+      let c = Keyboard.keyPressed();
     }
 
-let previous = c;
-while ( c = previous )
-{
+    let previous = c;
+    while ( c = previous )
+    {
+      let c = Keyboard.keyPressed();
+    }
 
-}
-
-    do Output.printInt(c);
+    do Output.printChar(previous);
     return c;
   }
 
