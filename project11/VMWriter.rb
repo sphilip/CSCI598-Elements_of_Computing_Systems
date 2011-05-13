@@ -54,12 +54,13 @@ class VMWriter
   # write goto
   # input: label (string)
   def writeGoto (label)
-    @write.puts " if-goto #{label}"
+    @write.puts "goto #{label}"
   end
 
   # write if-goto
   # input: label (string)
   def writeIf (label)
+    @write.puts "if-goto #{label}"
   end
 
   # write call
