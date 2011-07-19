@@ -1,0 +1,76 @@
+Chapter 14: Feedback and Flip-Flops
+-------------------------------------
+circuit to create electric bell
+
+
+
+
+
+
+
+oscillator
+	circuit wiring:
+	output wired to input
+	       alternates b/w having voltage(1) and no voltage(0)
+	       changes b/w 0,1 on regular basis
+	acts as a clock
+	speed of clock depends on how fast input changes
+
+cycle = interval that the clock changes starting from & ending w/original value
+
+period = time required to complete 1 cycle
+
+frequency = 1/period
+
+hertz (Hz) = cycles/second	
+
+can create circuit w/2 NOR gates, switches & 1 lightbulb 
+    closing upper switch => lightbulb = on
+    opening   "      "   =>   "          "
+    	      due to feedback
+    closing & opening lower switch => lightbulb = off
+    
+flip-flop
+	**circuit retains info**	
+	2 stable states when both switches are open
+	from William Henry Eccles (1875-1966) & FW Jordan in 1918
+	types:	1) RS (reset-set) ff
+		      2 inputs: reset,set
+		      2 outputs: Q, not Q
+		      R & S cannot both = 1 b/c outputs = 0
+		      
+		2) level-triggered D (data)-type ff aka level-triggered D-type latch
+		      2 inputs: data, clock
+		      level-triggered = ff saves value of D when clock @ particular level
+		      latch = circuit holds onto 1 bit of data
+		      clock input isn't a real clock, indicates when data input needs to 
+		      	be saved (can alternate b/w 0,1)
+
+edge-triggered = outputs changes only when a transition from 0 => 1 made
+	       changes made to data input doesn't affect output until transition
+
+edge-triggered D-type ff = 2 stages of R-S flip flops
+	       clock input controls both stages (inverted input to 1st stage)
+	       
+positive transition = transition from 0 to 1
+
+negative transition = transition from 1 to 0
+
+frequency divider:
+	  cuts freq in half
+	  1/2 frequency = 2x period
+	  when not q output is set as the data input of flip flop
+
+ripple counter = output of each flip flop becomes clk input of next flip-flop
+       changes ripple through stages sequentially
+       flip-flops @ end delayed a little due to all the changes
+
+synchronous counters = outputs change @ same time
+
+can determine frequency using D flip-flop:
+    connect an oscillator to clk input of 8-bit counter
+    counter shows how many cycles completed
+    start a stop watch when counter=0 & stop when counter returns to 0
+    divide max # represented by flip-flop by time needed to return to 0
+    ie. for 8-bit counter, max value = 256 & time = 10 seconds => 25.6 Hz
+    

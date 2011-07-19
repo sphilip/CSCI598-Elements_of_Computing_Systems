@@ -1,0 +1,236 @@
+Chapter 18: From Abaci to Chips
+---------------------------------
+development of # systems an early tool to help keep track of commodities & 
+property
+		ancient Greeks/native Americans used pebbles/kernels of grain
+		Europeans used counting boards
+		Middle East developed the abacus
+			introduced by traders to China in 1200 AD
+			
+logarithms
+	developed by John Napier (Scottish mathematician, 1550-1617)
+	to find the product of 2 #s:
+		look up each # from table of logarithms
+		calc sum
+		use table in reverse to find actual product
+	log table only contained values for certain #s
+	    	#s in b/w calculated w/ interpolation (using differences)
+	instead of tables, use a slide rule
+		orignally by Edmund Gunter (1581-1626)
+		refined by William Oughtred (1574-1660)
+		last made in 1976 by Keuffel & Esser Company
+				
+computer = hired person who calculates #s
+		log & trig tables necessary for nautical navigation
+				
+Charles Babbage (1791-1871)
+	wanted to remove error from the tables
+	1820-1833 - created Difference Engine
+		to automate process of constructing & printing a table
+		multidigit decimal #s represented by geared wheels placed in 1 of 10 
+			positions
+		negatives handled w/10's complement
+		mechanical adding machine
+		abandoned by 1833
+		eventually created by Georg & Edvard Cheutz (1853)
+	1833-1871 - created Analytical Engine
+		closest thing to computer
+		engine contained a store (ie. memory) & mill (ALU)
+		multiplication done via multiple additions
+ 		division       "     "	"      " subtractions
+		can be programmed via cards (adapted from Jaquard pattern-weaving loom)
+	1st person to understand importance of needing a conditional jump
+
+1890 US census
+  Census office feared that 1890 census info would take more time (>7yrs) 
+        	to process, wanted to automate process
+	chose machinery developed by Herman Hollerith (1860-1929, worked as 
+					statistician for 1880 census)
+	
+Herman Hollerith (1860-1929)
+       worked as statistician for 1880 census
+       Census office feared that 1890 census info would take more time (>7yrs)
+       	to process, wanted to automate process & chose his machine
+       created tabulation machine 
+       	       used manila punch cards (6.625x3.25 inches)
+       	       	    holes arranged into 24 columns of 12 positions (288 total 
+       	       	    positions)
+		    census taker indicates applicable characteristics by making a .25 inch 
+		    	square hole into appropriate position on the card
+	       	    ex. age indicated via 2 holes (1st = 5 year span of ages
+	       	        (0-4,5-9,10-14,etc); 2nd = 1 of 5 possible holes for precise 
+	       	        age in range of 1st hole)-> coding age needs total of 28 
+	       	        positions
+	       	    didn't use binary b/c of cases where all holes would need to be 
+	       	    	punched, become structually unstable
+	       operator pressed a board containing 288 spring-loaded pins on each card
+	       pins that matched the punched holes in the cards came into contact w/
+	       		pool of mercury to complete eletrical circuit
+	       	    triggered electromagnet to increment decimal counter
+	       sort cards via sorting machine
+		    used hand press like the tabulation machine
+		    had electromagnets to open a hatch to 1 of 26 separate sections
+		    operator needed to drop card into that section & close hatch
+ 	1890 census info
+	       processed >62 million cards
+	       contained 2x info from 1880
+	       data processes in 1/3 of time
+	1896 - founded Tabulating Machine Company 
+	1911 - through mergers, became Computing-Tabulating-Recording Company (C-T-R)
+	1914 - Thomas J. Watson became president of CTR
+	**1924 - Watson changed name of company to International Business Machines Corporation (IBM)**
+	
+Conrad Zuse (1910-1995) - engineering student
+       1935 - built 1st relay computer 
+       used binary #s but used mechanical memory (not relays) @ 1st
+       punched holes into 35mm movie film to program
+
+George Stibitz (1904-1995) - Bell Telephone Labs
+       took home telephone relays & created a 1-bit adder @ home (in kitchen)
+       1939 - adder became the Complex # Computer
+
+Howard Aiken (1900-1973) - Harvard grad student
+       wanted to do lots of repetive calculations
+       led to working w/IBM
+       1943 - created Automated Sequence Controlled Calculator (ASCC)
+       	    Harvard Mark I - 1st digital computer to print tables
+	    	    	 II - largest relay-based machine (used 13000 relays)
+			    relays tended to fail
+			    	   b/c relays are bendable pieces of metal, could eventually break
+				   piece of dirt or paper stuck b/w contacts
+			    **moth stuck in relay = 1st bug being found**
+
+replacement for relays = vacuum tubes
+	developed by John Ambrose Fleming (1849-1945) & Lee de Forest (1873-1961) for 
+		the radio
+	tubes used to amplify telephones, radio signals
+	can be wired into AND/OR/etc gates
+	problems: expensive
+		  needed lots of electricity
+		  generated lots of heat
+		  burned out
+		  when used in computer, not immediately known
+	benefits: tubes can switch in 1 microsecond (1000x faster than relays - can 
+		switch in 1ms)
+	overall computing speed linked to speed that machine reads in program from 
+		paper
+	1945 = relays replaced w/tubes in computers
+
+Alan Turing (1912-1954)
+     	contributed to Colossus computer (1943) to break the German code-making 
+     		machine
+     	2 papers: 1. "computability" = analysis of the ability of a computer
+	  	     		     Turing Machine - abstract model of a computer
+		  2. Turing test = machine intelligence (AI) test
+
+ENIAC = electrical numerical integrator & computer (1945)
+      Moore School of Electrical Engineering (University of Pennsylvania)
+      J.Presper Eckert & John Mauchly
+      30 tons, 18000 tubes, largest computer
+      used decimal #s internally
+      operator must throw switches & plug in cables to use computer
+
+EDVAC = electrical discrete variable automatic computer (1949)
+      sucessor to ENIAC, concept created before ENIAC operational
+      got John von Neumann (1903-1957) interested to join	
+      von Neumann architecture:	use binary internally
+      	  	  		have as much memory as possible to store code & data
+				instructions sequential in memory & addressed w/program counter, allow conditional jumps
+      von Neumann bottleneck = von Neu machine spends alot of time fetching 
+      	instr
+      	  solns: 1. mercury delay line memory (mid 1940s)
+	  	 	 5 ft tubes of mercury
+			 1 end of tube sent pulses into mercury 1ms apart
+			 pulses take 1ms to travel to other end (detected like sound waves &
+			  routed to beginning)
+			 result: each tube stored 1MB of data
+			 mercury used to minimize energy loss & echoes when signal transmitted 
+			 	from piezoelectric quartz crystal to medium and back (same acoustic 
+			 	impedance)
+		 2. magnetic core memory (1947)
+		    	 large arrays of magnetized metal rings strung w/wires
+			 each ring stored 1 bit
+Claude Shannon (1916)
+       1938 - relationship b/w switches, relays & boolean algebra
+       1948 - paper "A mathemetical theory of communication" while working for 
+       	Bell Telephone Lab
+       	    **introduced "bit"
+	    est. information theory = transmitting digital info in presence of noise &
+	    	 how to compensate
+
+UNIVAC - universal automatic computer (1951)
+       by Eckert-Mauchly Computer Corporation
+       1st commercially available computer & 1st computer delivered to Bureau of
+        Census
+       on TV (on CBS) to predict 1952 presidential election results
+       
+transistor (1947)
+       constructed w/slab of germanium (semiconductor) & strip of gold foil 
+       	(very good conductor)
+       by John Bardeen & Walter Brattain @ Bell Labs
+       idea by William Shockley (boss of Bardeen & Brattain)
+       benefits: don't require vacuums
+                 needs less power => less heat => last longer
+                 able to operate by battery
+       1st application = hearing aids
+       everything made w/relays can be made w/transistors
+                 AND gate = 2 transistors in series
+                 OR gate = 2 transistors w/ emitters connected to ground & 
+                 	collector = source voltage
+semiconductor = conductance can be changed via doping (combined w/impurities)
+	N vs P-type semiconductors
+	transistors made into amplifiers by sandwiching (ie. NPN)
+	     base,emitter,collector
+	     small voltage applied to base controls larger voltage from collector to 
+	     	emitter
+	     no base voltage = transistor is off
+
+integrated circuit (IC) = layers of thin Si wafers that are precisely doped & 
+	etched in different areas to form microscopic components
+	   creating 1 is expensive => mass productions lowers overall cost
+	   invented by Jack Kilby (Texas Instruments 1958) & separately by Robert
+	    Noyce (Fairchild Semiconductor Corp 1959)
+	   	    Noyce left Shockley Semiconductor Labs to start Fairchild
+	   chip is delicate, must be protected & able to provide way for components 
+	   	in the chip to be accessed
+	   propogation time = time needed for a change in inputs to be reflected @ 
+	   	output
+
+small-scale integration (SSI) = chip w/ <10 logic gates
+medium-scale		(MSI) = 10 -> 100 gates
+large-scale		(LSI) = 100 -> 5000 
+very-large-scale	(VLSI) = 5000 -> 50,000
+super-large-scale	(SLSI) = 50,000 -> 100,000
+ultra-large-scale	(ULSI) = >100,000 gates
+
+TTL vs CMOS - mid 1970s
+    TTL = transistor-transistor logic
+    	needs constant source of power (plug in voltage source)
+	short range of acceptable input voltage
+	      too little voltage = chip doesn't work
+	      too high voltage = chip breaks
+	7400 series of chips implement AND/OR/DFF/etc gates
+	not good to make RAM (ie. RAM64K needs 2048 RAM256 chips)
+	    	 as an oscillator (for clock signals)   
+    CMOS = complementary metal oxide semiconductor
+    	large range of acceptable input voltage
+	needs less power -> can use battery
+	lack of speed
+
+negative logic = when low voltage is called logical high & high voltage is 
+	called logical low
+	
+printed circuit board
+	board has holes & covered w/thin layer of copper foil
+	use acid to etch away @ copper to solder IC sockets onto the board
+	preserve areas w/o circuitry w/acid resistant substance
+
+early 1971 - Intel 1st to put entire processor on a single chip
+      Intel started by Robert Noyce (IC coinventor) & Gordon Moore (Moore's Law)
+      also created the Intel 4004
+      	   2300 transistors
+	   4-bit microprocessor (data pats only 4-bits wide)
+	   max clock speed = 108,000 cycles/sec = 108KHz
+	   addressable memoery = 640 bytes
+
+clock speed = max speed an oscillator can change for a microprocessor to work

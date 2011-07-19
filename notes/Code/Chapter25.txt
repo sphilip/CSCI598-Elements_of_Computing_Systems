@@ -1,0 +1,146 @@
+Chapter 25 - The Graphical Revolution
+----------------------------------------
+Vannevar Bush - 
+	Director of the Office of Scientific Research & Development
+	"As We May Think" essay in Life magazine, 1945
+	Memex - device that stores books, articles, records, pictures, etc
+
+UI = point where human & computer meet
+	
+teletypewriter 
+	earliest interactive computer
+	user types line
+	computer responds w/multiple lines
+	all in ASCII, proceeds down roll of paper
+
+CRT = cathode ray tube
+	software can treat entire screen as 2D platform for info
+	to keep display output logic of OS generalized, use CRT like "glass teletypewriter"
+	ie. UNIX
+	ASCII not enough, ANSI creates "Additional Controls for Use with American National Std Code for Information Interchange"
+	
+dumb terminal = keyboard + CRT responding to ASCII codes coming from a remote computer
+
+raster display = total image made up of series of horizontal raster lines drawn by an electron gun that shoots a beam quickly 
+
+increasing # of possible colors = more bits per pixel = incresae memory requirements of display adapter
+
+color depth/resolution = # of bits per pixel
+	# of colors = 2^(# of bits per pixel)
+
+Douglas Engelbart
+	worked on computer interfaces
+	mid 1960's - 
+		@ Sanford Research Institute
+		created 5-prong keyboard & the mouse
+
+1970 - Xerox founds the Palo Alto Research Center (PARC) to develop new ideas for computer interfaces
+	Alto computer
+		designed/built in 1972-1973
+		built from 200 ICs
+		BW screen = 8.5"x11"
+		total amt of memory for video display was part of address space of processor => can draw pictures w/mouse
+		use mouse to interact with object on screen
+		multiple programs put into windows & shown all at once
+
+1972 - PARC creates Smalltalk, 1st version of OOP		
+1979 - Steve Jobs visits PARC & Alto
+1984 - creates Macintosh (inspired by Alto) & Mac OS
+
+text-based single-user OS: small size, little API
+graphical OS: large, many API functions (each named after its purpose)
+	must provide way for program to display grpahics on screen (draw lines,circles,etc)
+	use same API for video memory & printer (what you see is what you get - WYSISYG)
+
+Mac OS only supports 1 type of hard drive, video display, etc (b/c Apple builds both hardware & software)
+
+for other computers, different hardware gets different levels of support & quality
+
+high-level programming languages
+	Macintosh = Pascal
+	Windows = C
+
+C++
+	developed by Bjarne Stroustrup, Bell Telephone Labs
+	1st developed as translator to convert c++ to c (though unreadable)
+
+RTF = rich text format
+	by Microsoft
+	exchange formatted text among apps
+
+computer graphics
+	vector graphics
+		create images algorithmically via lines, curves, etc
+		stored in metafile (collection of vector graphics drawing commands encoded as binary)
+	raster/bitmap graphics
+		encodes image as array of bits corresponding to each pixel of output image
+
+CCD = charge-coupled device
+	semiconductor releases electrical charge when exposed to light
+	1 CCD cell needed for each pixel to be sampled
+	ie. scanner - row of CCD sweep along surface of image
+	    video cameras - 2D array of CCD
+	    
+data compression
+	lossless compression
+		original file can be recreated, sometimes results w/size of compressed file >> original file
+		RLE = run-length encoding = record # of times same pixel value used
+		LZW = Lempel, Ziv, Welch algorithm = detect patterns of differently valued pixels    
+	lossy compression
+		original data is discarded during compression, can't recreate 
+		JPEG = Joint Photography Experts Group
+		
+digitized sound
+	1983 - advent of CD by Philips & Sony
+		stored 74min of sound 
+		length chosen so Beethoven's Nineth Symphony can fit on 1 CD
+
+sound encoded via PCM = pulse code modulation
+	ADC = analog - digital converter = converts analog # to binary
+	DAC = digital - analog converter = convert electrical signal (binary) to analog
+	sampling rate = constant rate which the voltage represents sound wave converted to digital value
+	
+1928 - Harry Nyquist (Bell Labs) shows sampling rate >= 2x max grequency needed to be recorded & played back
+
+MIDI = musicical instr digital interface	
+	digital values stored on CD as holed carved into surface
+	read w/laser light
+
+telephone system can't transmit bits, only sound
+	therefore, need to move from sound => bits => sound
+
+carrier = continuous sound wave of single freq & amplitude
+	can modulate (change) sound waves to emulate binary
+
+modem = modulator/demodulator
+	device to convert sound to bits
+	form of serial interface (1 bit sent @ a time)
+	able to convert 0,1 @ different rates 
+	FSK = frequency-shift keying
+		1 byte of data needs 10bits 
+		each byte starts w/a start bit & ends w/ stop bit + 8 data bits
+
+BBS = bulletinboard system
+
+TCP/IP = transmission control protocol & Internet protocol
+	method for computers to talk to each other
+		divide blocks of data into packets & sent separately
+
+HTTP = hypertext transfer protocol
+	data on webpage defined by HTML (ASCII text w/formatting info)
+	server side code = computer storing original web pages
+		handled w/ CGI (common gateway scripts
+	client side code = code running on local computer
+		Javascript
+		
+Java program compiled to Java byte code (like assembly) & runs on JVM (Java virtual
+ machine)
+ 	JVM allows for platform independent programming
+		
+	
+		
+
+
+	 
+	
+	

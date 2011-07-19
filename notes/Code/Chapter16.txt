@@ -1,0 +1,56 @@
+Chapter 16: Assembling Memory
+-------------------------------
+
+function of memory: to keep any info intact b/w time of writing & reading
+
+flip flop can store 1 bit of information
+
+D-type ff:
+
+
+
+
+
+
+
+for multibyte input, can use:
+    1) multiple 1-bit ff & connect write input together (ie. save 1, 8-bit #)
+    2) 1 data-in & 1 data-out (ie. to save 8, 1-bit #)
+       	   data-out of each ff connects to 8-3 mux
+	   write signal connects to 3-8 dmux (8 outputs= 8 inputs to ff)
+	   value @ desired address used as selector for both mux, dmux
+	   called RAM 8x1: 8, 1-bit ff
+
+2nd method = RAM
+    random access memory
+    random access = each of 8 ff can be read/written by changing address
+    	   - vs memory that must be read sequentially
+	   - combine 2 RAM8:
+	     	     1-2 dmux
+		     (2) RAM8
+		     2-1 mux
+	   - volatile memory = needs constant supply of electricity to retain contents
+
+1 kilobyte (KB) = 1024 bytes
+     Greek khilioi = 1000
+     2^10 = 1024 ~= 1000
+     1 KB has:
+       8 data inputs
+       8 data outputs
+       10 address inputs
+
+1 megabyte (MB) = 1024 KB
+     Greek megas = great
+
+1 gigabyte (GB) = 1024 MB
+     Greek gigas = giant
+
+1 terabyte (TB) = 1024 GB)
+     Greek teras = monster
+
+petabyte = 2^50 bytes
+exabyte = 2^60 bytes
+
+bits = # of bytes * 8
+
+if 1 ff (RAM 1x1) has 9 relays => RAM 64Kx8 has 5 million relays

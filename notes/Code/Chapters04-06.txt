@@ -1,0 +1,114 @@
+Chapter 4: Anatomy of a Flashlight
+------------------------------------
+circuit is a circle
+
+electron and electricity derived from ancient Greek word elektron, meaning amber
+(the glasslike hardened sap of trees)
+	-b/c ancient Greeks experimented with rubbing amber with wool, which produced 
+	static electricity
+	-rubbing wool on amber causes the wool to pick up electrons from the amber.
+	-wool winds up with more electrons than protons & amber ends up with fewer 
+	electrons than protons
+	
+protons held together by "strong force", which is stronger than the repulsion of 
+like charges
+	Messing around with the strong force involves splitting the nucleus, which 
+	produces nuclear energy
+	
+chemicals in batteries are chosen st reactions b/w them generate spare electrons 
+on the negative terminal (anode) and demand extra electrons on the positive 
+terminal (cathode)
+	thus, chemical energy is converted to electrical energy
+	reaction can't proceed unless some way that the extra electrons can be taken 
+	away from the negative terminal of the battery and delivered back to the 
+	positive terminal
+	
+	  |-<---<--
+	  V       |
+	  _       |		Movement of electrons
+	_| |_     |
+ |  +  |    ^
+ |     |    |
+ |  -  |    |
+ |_____|    |
+    |       ^
+    V       |
+    -->--->--
+ 		
+Electrons orbit the nucleus in various levels (shells)
+
+An atom that has just one electron in its outer shell can readily give up that electron, which is what's necessary to carry electricity. 
+   	conducive to carrying electricity and called conductors
+
+insulator = substance w/very high resistance (doesn't conduct electricity)
+	ie. Rubber and plastics
+	
+longer wire = higher resistance
+
+thicker wire = lower resistance 
+	thickness of the wire allows more electrons to move through the wire
+	
+voltage = potential for doing work
+	named after Count Alessandro Volta (1745-1827), invented 1st battery in 1800
+	
+amperes from Andre Marie Ampere (1775-1836)
+
+1 A = 6.24x10^18 electrons per second
+
+ohm from Georg Simon Ohm (1789-1854)
+
+If the battery is big enough, the wire will get hot because the electrical
+energy is being converted to heat. If the wire gets very hot, it will actually
+glow and might even melt
+
+lightbulb has a filament (a thin wire), made from tungsten. 
+	One end of filament connected to the tip at the bottom of the base
+	the other end is connected to the side of the metal base
+	ends are separated from the tip by an insulator
+	resistance of the wire causes it to heat up
+	In open air, the tungsten would get hot enough to burn
+	in vacuum of the lightbulb, the tungsten glows and gives off light
+	
+watt from James Watt (1736-1819)
+
+
+
+Chapter 5: Seeing Around Corners
+----------------------------------
+thick wire conducts much better than a thin wire
+
+To use the earth as a conductor, have to use something that maintains a
+substantial contact with the earth
+	can use a copper pole at least 8 feet long and 0.5 inch in diameter or the 		
+	cold-water pipes (if made of copper and originate in the ground outside the 
+	house)
+	
+earth has too much resistance for low-voltage batteries
+
+gauged wires 
+	thickness of wire is measured in American Wire Gauge (AWG)
+	smaller the AWG # = thicker wire = less resistance
+	thicker wires = more expensive
+
+
+Chapter 6: Telegraphs and Relays
+---------------------------------
+
+telegraph ("far writing") relies on electromagnetics
+	wrap wire arounds iron bar (enough wire to create resistance)
+	applying electricity creates a magnetic field
+	uses a key as a switch
+
+@ end of the wire is a receiver which was an electromagnet pulling a metal lever
+      	a wound-up spring slowly pulled a roll of paper through the gadget, & 
+      	a pen bounced to draw dots/dashes 
+	person transcribes code into english
+
+for long distances, need to use relay (an in-between telegraph station)
+    	cheap amplification since signal decreases as length of wire (resistance) increases
+	can use incoming signal to attract a wire to send identical msg (via 
+	electromagnet)
+	ie. incoming mesg (in form of electrical signals) creates magnetic field which attracts a wire (acting as a switch) to complete the circuit of another 
+	telegraph
+
+ 		

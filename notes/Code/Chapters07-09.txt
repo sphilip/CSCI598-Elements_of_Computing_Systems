@@ -1,0 +1,92 @@
+Chapter 7: Our Ten Digits
+---------------------------
+roman numerals
+      V = 5
+      X = 10
+      L = 50
+      C = 100 (centum)
+      D = 500
+      M = 1000 (mille)
+
+adding = combine symbols, simplify if needed
+
+Hindu-Arabic # systems
+      positional (a digit represents a different quatity depending on where it's 
+      found in the #), 100 vs 10000
+      	   also works for non-decimal based systems
+      no special symbol for 10
+      contains a numerical quantity for zero
+
+
+
+Chapter 8: Alternatives to 10
+-------------------------------
+octal:
+   _______  _____  ____  ___  ___
+   x32,768  x4096  x512  x64   x8
+
+wire can be a binary digit (bit): flowing current = 1
+switch	      	     	   	: switch is on = 1 
+lightbulb			: light is on = 1
+telegraph relay			: relay is closed = 1
+
+
+
+Chapter 9: Bit by bit by bit
+------------------------------
+in computer age, bit = basic building block of info
+
+use redundancy to counteract the effect of noise
+
+noise = anything that interferes with communication
+
+information represents a choice among 2 or more possibilities
+	in spoken language, ppl use words rather than #'s corresponding to its entry 
+	in a dictionary
+
+information that can be reduced to a choice among 2 or more possibilities better expressed w/bits
+
+if information can't be encoded as bits, better not to
+
+universal product code (UPC) visual display of bits
+	30 vertical black bars & gaps w/ different widths
+	scanner picks up a thin cross section upc
+	each black bar (thinnest) = 1
+	each gap = 0
+	thicker bars = multiple 1's
+	first 3 bits always 101
+		
+|left guard|	|left side code|	|center guard|	|right side code|	|right guard|
+			 101		 7 bit code (0-9)	 		01010				 7 bit code (0-9)
+always present 									 always present										always present
+
+left-hand guard pattern - allows scanner to get oriented
+		scanner can determine the width of the bars and gaps that correspond
+		to single bits
+	
+center guard - error checking (tampering, etc)
+       if scanner can't find code where it's supposed to be, won't accept upc
+       allows bidirectional scanning
+
+left side code begin w/0, ends w/1
+right side code begin w/1, ends w/0
+       scanner reading otherwise knows that upc is wrong
+       each digit corresponds to 2 bars 
+       each code has odd parity
+       each code of left side is complement of right side
+
+even parity = even # of 1 bits
+odd  	    = odd # of 1 bits
+	
+upc code same as #ical code below it (in form A BCDEF GHIJK L)
+    1st digit = number system character
+    	0 = regular upc code
+	2 = variable weight product (meat,etc)
+	5 = coupon
+    next 5 digits = manufactuerer code
+    	51000 = Campbell's
+    next 5 digits = product code for that company
+    final digit = modulo check character
+    	calc 3*(A+C+E+G+I+K) + (B+D+F+H+J)
+	round # upward to be multiple of 10 and find difference
+	#'s should match

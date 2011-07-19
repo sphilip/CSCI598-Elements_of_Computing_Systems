@@ -1,0 +1,254 @@
+Elements of Computing Systems
+-----------------------------------
+Chapter 1 - Boolean Logic
+-----------------------------------
+Elementary logic gates - NAND, etc
+
+gate = physical device implementing a Boolean function
+
+truth tables
+
+gate interface described via truth table, bool exp
+
+use simple gates to create complex gates
+
+boolean exp
+
+canonical representation (combinations of boolean exp where the function = 1)
+
+(V)HDL = (virtual) hardware descriptor language
+	used to plan, debug and optimize the entire chip before real production
+	becomes blueprint for resulting chip 
+	
+Mux, DMux, multi-bit & multi-way versions of simple & complex gates
+
+-----------------------------------
+Chapter 2 - Boolean Arithmetic
+-----------------------------------
+Binary addition - signed & unsigned
+
+adders:
+	half-adder = operate on 2,1-bit #s @ a time
+	full-adder = 2 half-adders, where output of 1st passed to input of 2nd
+	adder = using full-adder to add multi-bit #s
+	
+ALU = arithmetic logic unit
+	inputs: 2, 16-bit data inputs
+				  2, 1-bit input to zero the either inputs
+				  2, 1-bit input to negate  either input
+				  1, 1-bit code for arithmetic vs boolean addition
+				  1, 1-bit code to negate output
+  outputs: 1, 16-bit output
+  				 1, 1-bit code if output = 0 
+  				 1, 1-bit code if output < 0
+
+-----------------------------------
+Chapter 3 - Sequential Logic
+-----------------------------------
+memory - requires concept of time
+
+clock
+	hardware component alternating b/w 0,1
+	cycle = time completed from start of 0 to end of 1
+	each clock cycle = 1 time unit
+	
+flip-flop (FF)
+	enables time-dependent actions
+	out(t) = in(t-1)
+	able to maintain state
+	data flip-flop (DFF)
+	
+register
+	stores value over time
+	out(t) = out(t-1)
+	register = Mux(in + output of DFF, load bit)
+	
+memory
+	stack several registers, each register given address (from Mux)
+	RAM = random access memory 
+		able to access any register regardless of physical location
+
+counters
+	integer # that increments every time unit
+	ie. program counter - output = address of next instruction
+	
+single-bit register = binary cell = store 1 bit of info
+
+multi-bit register = multiple single-bit register using Mux for indexing
+	
+	
+-----------------------------------
+Chapter 4 - Machine Language
+-----------------------------------
+machine language = agreed-upon formalism, designed to alter memory using 
+	processor & registers
+	
+memory
+	HW device storing data & instr
+	have same structure -> continuous array of cells w/fixed width, each w/
+		unique addr
+	
+processor
+	CPU = central processing unit
+	able to perform fixed # of basic operations:
+		arithmetic,logic
+		memory access
+			direct addr = use specific addr
+			immediate addr = load constants
+			indirect addr = instr specifies a memory location holding required addr
+				handles ptr
+		control - able to control flow of execution
+			repetition = jump backward to beginning of a loop
+			conditional jump = jumping if boolean condition is true
+			subroutine calling = jump to 1st command of another code segment
+			unconditional jump
+
+registers
+	able to hold 1 value
+	serves as high-speed local memory, allows processor to manipulate data quickly
+	able to minimize memory access commands
+	
+able to read/srite programs via symbolic commands (assembly)
+
+assembler = translation from assembly to binary
+
+memory address space
+	instruction memory = 
+	data memory
+	
+registers
+	D = only stores data vlues
+	A = acts as either data value, address in data memory, or address in instr 
+		memory, direct access to instr memory)
+		
+instruction types
+	A-instr = used to set A register to a 15-bit value
+	C-instr = determines what to compute, where to store computed value, & 
+		the next operation
+		3 components
+			dest - where to store computed value
+			comp - instructs ALU what to compute
+			jump - which command to grab & execute
+			
+
+-----------------------------------
+Chapter 5 - Computer Architecture
+-----------------------------------
+stored program concept
+	computer based on fixed hardware platform
+	instr used & combined 
+	logic not embedded on hardware
+	
+von Neuman architecture
+	CPU interacts w/ memory device
+	receive data from input device
+	send data to output device
+	stored program concept -> memory stores data & instr for computer
+	components : memory, CPU
+
+memory device - holds 2 types of info
+	data memory
+	     data abstractions (ie. var, arrays,etc) becomes binary 
+	     single word selected via address
+	     read/write
+	instruction memory
+	     read-only
+	     load new program by replacing ROM
+	     translation of high-level lang to binary
+	     CPU reads word from instr, decodes & executes
+	     machine language = instr written in machine readable code
+
+CPU
+	executes instr of currently loaded program
+	3 components: ALU, Register, Control Unit
+	  ALU = Arithmetic Logic Unit
+	      executes all low-level arithmetic/logic ops
+	  Register
+	      does simple calc quickly
+	      able to hold single word
+	      2 types: D,A
+	      	D = data 
+		  temp storage of computed values
+		A = addressing
+		  if next addr depends on exection of previous instr, addr stored stored here
+		program counter 
+		  keeps track of next instr to be fetched
+	  Control unit
+	      instr decoding
+	      finds which instr to fetch & execute next
+screen, keyboard interacts w/ user via memory-mapped buffers
+	draw on screen w/screen memory map
+	access keyboard w/keyboard memory map
+
+--------------------------
+Chapter 6 - Assembler
+--------------------------
+sources that symbols are introduced by:
+	1. variables - programmer uses symbolic variable names & translator automatically assigns name to memory address
+	2. labels - mark locations in program w/symbols (for looping,etc)
+
+assembler must be able to convert symbols to binary codes
+
+4 tasks for building assembler:
+  1. parse symbolic command
+  2. generate binary for symbol
+  3. replace all symbolic references w/numeric memory locations
+  4. assemble into single file (complete machine instr)
+
+
+-------------------------
+Chapter 7 - Virtual Machine I: Stack Arithmetic
+-------------------------
+virtual machine = abstract, imaginary computer 
+	code portability
+	VM code can run on many different OS w/o change to original code
+
+compilation = translation of high-level program to machine language
+
+2 approaches to creating compilers	    
+  each language has own compiler 
+  2-tier compilation   - ideal
+     1st step - parse high-level program & commands into intermediate-level program
+     2nd step - translate intermediate-level program into machine lang
+     VM code portable over different machines
+
+stack machine model
+      arithmetic commands pop operands from top of stack & push results back onto top of stack
+      can transfer data items from top of stack to mem locations
+      LIFO
+      stack ptr (SP) points the next available location
+
+Memory split into sections
+       0 = SP (pts to next instr)
+       1 = local (LCL)
+       2 = argiment (ARG)
+       3 = THIS
+       4 = THAT
+       5-12 = temp
+       13-15 = general purpose registers for compilation
+       16-255 = static var (of all VM funcs)
+       256-2047 = stack (stores instr)
+       2048-16383 = heap (store objects/arrays)
+       16384-24575 = memory mapped buffers (screen,keyboard)
+
+------------------------
+Chapter 8 - Virtual Machine II: Program Control
+------------------------
+each subroutine call, must handle
+     - pass parameters from caller to subroutine
+     - save state (current ptr values) of caller before executing subroutine
+       	    must push return addr, lcl, arg, this, that in this order prior to executing
+     - allocate space for local vars of called subroutine
+     - jump to subroutine's memory location
+     - return values from subroutine to caller
+     - return stored state
+       	      frame = temp store lcl
+	      ret = frame-5, pop arg, sp = arg+1, that = frame-1,
+	      this = frame -2, arg = frame-3, lcl = frame-4	
+     - jump to execute next instr
+       	      go to return addr
+     
+------------------------
+Chapter 9 - High Level Lang
+------------------------
+nothing too important

@@ -1,0 +1,43 @@
+Chapter 15:Bytes & Hex
+------------------------
+data path = # of bits that travel from gate to gate
+
+1 byte = 8 bits
+	easy to store #s in BCD format (see Ch23)
+	also can store most written languages, shades of gray (ppl can differentiate 
+		256 shades)
+
+1 nibble = 4 bits
+
+octal = base-8 # system
+	to convert binary to octal: take 3 bits & convert 
+	problem: a binary # that's 16-bits != 2 8-bit #s
+			10110011 11000101	= 131705
+			10110011		= 263
+				 11000101	= 305
+
+representations of multibyte values is consistent w/representations of 
+	individual bytes
+
+hexadecimal = base-16 system 
+	allows each byte is divided into equal # of bits
+	0-9, a-f
+
+Julius Caesar assassinated on "ides (15th) of March"
+
+fortnight = 14 days
+	full moon occurs 1 fortnight after new moon
+
+converting decimal => hex (for #s upto 65,565)
+		      xxx 
+  divide by 256	   __/   \__	  divide by 256
+	          /         \
+	         yyy        zzz
+  divide by 16  _/ \_	   _/ \_  divide by 16
+	       /     \    /     \
+	     aaa    bbb  ccc   ddd
+
+if remainder: take xxx - [whole #(xxx/D)*D], where D = current divisor
+
+2-digit signed #s = negative when hex begins w/8,9,a,b,c,d,e,f
+

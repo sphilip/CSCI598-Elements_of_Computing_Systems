@@ -1,0 +1,43 @@
+Chapter 10: Logic and Switches
+--------------------------------
+to ancient greeks, logic= means of analyzing language in search for truth
+
+basis of Aristotle's logic was syllogism
+
+syllogism = 2 premises are assumed true & a conclusion is deduced
+
+George Boole
+	son of shoemaker and maid
+	able to attend school for rich
+	invented type of algebra that looks/acts like conventional algebra
+		contains: operands (letters/#s)
+							operators (how operands are combined)
+							made operands refer to classes (group of things->set)
+							+ = union (or)
+							* = intersection (and)							
+							1 = universe
+							0 = empty class
+							
+algebraic rules (for +,*)
+	1. communitive: a+b=b+a
+	2. associative: a+(b+c) = (a+b)+c
+	3. distributive: a*(b+c) = (a*b)+(a*c)
+	
+	
+Chapter 11: Gates (not Bill)
+------------------------------
+logic gates = allow/ block flow of current
+
+boolean algebra & circuits combined by Claude Elwood Shannon (1916-)
+
+switch connects to electromagnet (battery + inductor)
+	if on, battery=on, inductor has magnetic field
+	
+double-throw relay = 2 outputs that are electrically opposite (if 1 has voltage,
+	other doesn't)
+
+buffer = used when input is weak/ signal is slightly weak
+
+Boole inspired to investigate logic b/c of the works of Augustus de Morgan 
+(9yrs older than Boole, released book same day as Boole)
+

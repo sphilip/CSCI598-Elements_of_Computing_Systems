@@ -1,0 +1,49 @@
+Chapter 20: ASCII
+-------------------
+variable-width code - use shorter codes for frequently used letters & longer for
+		 rarer codes (no differentiation b/w upper & lower case)
+   ie. morse
+
+fixed-width code - letters represented by fixed # of codes
+   ie. braille
+
+use shift code to change context from letter=> #s & use shift code again to 
+	return to original context
+
+need code to represent whitespace
+
+Baudot code
+       Emile Baudot (officer @ French Telegraph Services) developed code for 
+       1874 printing telegraph
+       1877: code adopted in FTS
+       1931: code modified by Donald Murray & standardized by CCITT (Comite 
+       		Consultatif International Telegraphique) aka ITU (international 
+       		telecommunication union)
+       5-bit code
+       has codes to represent carriage return & line feed
+
+carriage return = pushing button/lever on typewritter to move carriage to right
+	 (so printing occurs on left) 
+
+line feed = roll carriage so new line is beneath old line (as part of carriage 
+	return)
+
+ASCII 
+      american std code for information interchange
+      formalized 1967
+      standard for organization of codes representing each letter/#/punctuation
+      usu 7-bit code stored as 8-bits
+      problem: doesn't include non-American characters
+      extended ASCII character set: additional 256 codes to define other 
+      	characters
+
+soft hyphen = hyphen used to separate syllables in middle of words (only used 
+	to break a word b/w 2 lines)
+
+unicode
+	1988: alternative to ASCII to incorporate all types (ie languages) of 
+		characters
+	16-bit code
+	1st 128 characters = ASCII
+	problem: 1 character = 1 byte of storage
+		 needed space grows exponentially as # of characters increases

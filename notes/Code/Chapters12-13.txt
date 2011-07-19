@@ -1,0 +1,39 @@
+Chapter 12: A Binary Adding Machine
+-------------------------------------
+half adder:
+     2 inputs (a,b)
+     sum out = xor
+     carry out = and gate
+     fails to add possible carry in from previous addition
+
+full adder:
+     3 inputs (a,b,carry in)
+     2 half adders
+     sum out = sum out of 1st adder
+     carry out = or gate w/1st, 2nd carry out
+
+ripple-carry
+	total speed = # of bits * speed of Full Adder
+
+look-ahead carry = more circuitry speeds up adding
+
+Chapter 13: Subtraction
+-------------------------
+minuend - subtrahend = difference
+
+to subtract:
+   step 1. flip bits of subtrahend (one's complement)
+   step 2. add minuend to flipped bits
+   step 3. +1 to step 2
+   step 4. 
+   	when original minued < minuend: result - 100000
+	else 1111111-result
+
+overflow = # greater than # of input bits
+
+underflow = negative #
+
+
+
+
+

@@ -1,0 +1,38 @@
+Chapter 19: 2 classic microprocessors
+---------------------------------------
+control signals:
+	reset = reset microprocessor
+	WR = microprocessor needs to write byte of memory into RAM (corresponds to 
+		the write input of RAM)
+	irq = interrupt signal
+	
+ie. max speed of 2MHz => clock cycle = 1/2000000 = 500ns
+
+2 of 6 registers = H,L
+	H = high-order byte
+	L = low-order byte
+	together used to address memory
+	
+direct addressing
+
+indexed addressing
+
+immediate addressing
+
+sequential access = ie. microfilm, tape storage
+	all memory stored in order of encounter
+	
+parity = poor form of error checking
+
+memory-mapped IO = input/output devices replace addresses normally used for RAM
+
+little vs big endian 
+	result of Intel(little) vs Motorola(big) methods of storing multibyte
+		memory addresses
+
+PowerPC (by Apple) are microprocessors developed by Motorola, IBM & Apple
+	designed w/RISC (reduced instruction set  computing) to increase speed of 
+		processor through simplification of instruction set
+	memory access only done via load & store
+	lots of registers to avoid frequent access of memory
+	

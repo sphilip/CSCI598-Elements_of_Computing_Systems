@@ -1,0 +1,79 @@
+Chapter 17: Automation
+------------------------
+edge triggered ff easier to use
+
+accumulator = latch used to keep running total of #s
+
+16-bit can control the address signals of RAM array
+
+oscillator = clock signal input
+   - not a clock in the sense of telling time, only switching b/w 0,1
+
+use RAM to store in/outputs
+
+**memory always stores something, even if junk data**
+
+opcodes = instruction codes to "tell" circuit to perform a specific operation
+    1 byte in length
+
+also need control signals (ie. clock, clear, write)
+
+to store large #s (like 2 16-bit #s using 1 8-bit adder, can split result into 
+low-order byte (result of addding smaller #s) and high-order byte (result of 
+adding larger #s) and storing both in RAM
+   can be done with #s not multiples of adder size
+
+carry latch = saves carry bit
+
+use 3 bytes to store coding information
+    1 byte for opcode
+    2 bytes to store 16-bit memeory location
+    allows for storing of data in other places in RAM
+
+instruction fetch = send info to 3 8-bit latches
+    1st latch stores opcode
+    2nd latch stores high-order byte of memory address
+    3rd latch stores low-order byte of memory address
+    2nd + 3rd = 16-bit address in RAM  
+    **entire instruction cycle needs 4th cycle of clock signal**
+
+**increase in versatility = decrease in speed**    
+instruction execution = series of actions in response to opcode
+
+
+TANSTAAFL
+   there ain't no such thing as a free lunch
+   making machine better in one area = worsening in another
+
+jump instr uses preset, clear d-type ff
+     preset, clear = 0 for normal operations
+     if preset=1, Q=1
+     if clear=1, Q=0
+
+conditional jump = utilize jump instruction only as many times as needed
+     implemententation: add 1-bit latch to 8-bit adder
+     			    - will only latch value=1 if output=0
+			    - only when instruction = add/sub
+
+**controlled repetition (looping) separates computers from calculators**
+
+digital data = discrete data (has specific distinct values)
+
+analog data = continuous
+
+4 parts to digital computer
+  1) processor (CPU)
+     	 - several components: accumulator = latch holding # inside the processor
+	   	   	       ALU = arithmetic logic unit, only performs add/sub/logic func
+			       program counter
+	 - code (instructions) vs data (#s manipulated by code)
+  2) memory
+  3) >= 1 input device
+  4) >= 1 output device
+
+assembly language:
+  1) write program on paper using assembly
+  2) when ready to test code, hand assemble program by manually convert each 
+  		statement into machine code
+  3) use switches to enter machine code into a RAM array & run the program
+

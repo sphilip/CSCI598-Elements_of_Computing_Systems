@@ -1,0 +1,75 @@
+Chapter 22: fixed/Floating pt
+----------------------
+euler's # = e = (1+(1/n))^n as n => infinity
+
+fixed-point number system
+    decimal pt always fixed @ certain # of places
+    location of decimal pt not stored
+    works when #'s being used doesn't get too large for memory location
+    ex. 1.  BCD = binary-coded decimal 
+    	        simply the binary version of decimal 0-9, using 4 bits
+		useful for programs dealing w/money
+	2.   packed BCD = storage of 2 BCD digits in 1 byte
+	        includes a sign bit (no 2's complement)
+    
+scientific notation
+    4.9x10^11
+    4.9 = mantissa = characteristic = fraction part = significand
+    *** normalized form = when significand >= 1 but < 10 ***
+    11 = exponent
+    sign of exponent = magnitude of #
+    digits to right of decimal pt = negative powers of 10
+    digits to left of decimal pt = positive powers of 10
+
+
+floating-point
+    ideal for storing extremely small & large #s
+    based on scientific notation
+    digits to right of binary pt = negative powers of 2
+    digits to left of binary pt = positive powers of 2
+    ie. 101.1101 = 1*2^2 + 0*2^0 + 1*2^-1 + 1*2^-2 + 1*2^-4 = 5.8125
+    *** normalized form only has a single 1 to left of binary pt ***
+    normalized form = 1.011101 * 2^2
+
+ANSI/IEEE std 754-1985 = IEEE std for binary floating-pt arithmetic
+    ANSI = american national std institute
+    IEEE = institute of electrical & electronics engineers
+    std developed by IEEE & recognized by ANSI
+    2 formats:
+      1. single precision = needs 4 bytes
+      	    3 parts: 1-bit sign, 8-bit exponent, 23-bit significand
+	    LSB on right
+	    single normalized form always has 1 to left of binary pt, not included
+	    24-bit precision = 23-bit significand + 1-bit implied 1
+	       #s are accurate to 7 decimal places (all #s beyond 7 digits are
+	       		identical)
+	    exponent = range 0 -> 255
+	       the stored exponent is biased
+	       to get actual exponent, must subtract bias (127) from stored exp
+	    
+	    if exp ranges from 1->254, # = (-1)^s * 1.f x 2^(e-127)
+	       s = signed bit 
+	       f = signficand
+	       e = biased exponent
+		
+	    e = 0 & f = 0, # = 0; if sign bit=1, # is interpretted as -0
+	    e = 0 & f != 0, # = valid, not normalized; (-1)^s * 0.f x 2^-127
+	    e = 255 & f = 0, # = infinity; sign determined by sign bit
+	    e = 255 & f != 0, # = NaN
+
+      2. double precision = needs 8 bytes
+      	    3 parts : 1-bit sign, 11-bit exponent, 52-bit significand
+	    exponent bias = 1023
+	    # = (-1)^s * 1.f x 2^(e-1023)
+	    accurate to 16 digits
+
+floating pt arithmetic
+    addition: offset # w/ smaller exponent from # w/ larger exp by the
+    	 difference b/w the two exponents
+    mult: multiply both #'s signficands & add the exponents
+
+microcode = execution of internal instructions by coprocessor
+
+    
+
+

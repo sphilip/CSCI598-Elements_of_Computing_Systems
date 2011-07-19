@@ -1,0 +1,81 @@
+Chapter 24: Languages High & low
+----------------------------------
+an assembler reads assembly language program (source code) and creates file w/ \
+machine code (executable file)
+   1-1 correspondance b/w assembly langage & machine codes
+   separates each line of source code into operations & arguments & comparing e\
+ach separate word against list of possible operations & arguments
+   2 problems: 1. very tedious: working on microprocessor chip & needing to wor\
+ry about everything
+               2. assembly language not portable
+new microprocessor needs new assembler
+
+cross-assembler = assembler written on existing computer for another processor
+
+process of creating high-level language:
+        1. define lang
+        2. create syntax
+        3. write a compiler (complex assembler
+
+pros, cons of high-level language
+      pros: easier to learn
+            clear & concise
+            portable - aren't dependent on hardware
+      cons: assembly programmer can write better code than compiler
+            since portable, can't use specific features of processor
+
+FORTRAN
+	developed by IBM, mid-1950's
+	formula translation
+
+keyword = word recognized by compiler
+
+run-time error = errors that occur during the execution of a program
+IDE (integrated development environment)
+declaration statement = declare presence of variables
+assignment statement = variable is assigned a value
+
+Eratosthenes = librarian (276-196BC) at Alexandria
+	Sieve of Eratosthenes = write out all #s (ie. from 1-100), starting w/2 cross out all multiple of 2, & repeat for all #s not crossed out
+	also calculated circumference of earth
+
+COBOL = common buisness oriented language
+	designed so managers could read program code  & check for accuracy
+
+BASIC = beginner's all-purpose symbolic instruction code
+	designed for non-math/engineering majors & avoids punch cards
+	allowed a student to type commands preceded by #s
+	#s designate order of statements
+	lines w/o #s = system commands
+
+interpreter = source code is read & executed w/o first creating an executable file
+	easier to implement(than compiler) but runs slower
+
+Pascal
+	designed by Swiss CS prof Niklaus Wirth
+	structure of ALGOL & record handling of COBOL
+	
+Turbo Pascal
+	written by Danish student Anders Hejlsberg
+	popular w/IBM programmers
+	had an IDE
+
+IDE = integrated development environment
+	text editor + compiler in single program
+
+CPL (Common programming lang) => BCPL (Basic CPL, shortened to B) -> C
+
+C 
+	1969-1973
+	developed by Dennis Ritchie @ Bell Telephone Labs
+	supports
+		bit shifting/boolean operations on bits (unlike most languages)
+		pointers (numeric memory addressing)
+
+most commonly used programming languages (ALGOL-like => C, Pascal,etc) based on von Neumann architecture
+
+non-von Neumann languages = LISP, APL
+	LISP = list processing (for AI)
+	APL = a programming language (for array processing)
+	
+	

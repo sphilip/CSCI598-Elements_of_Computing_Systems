@@ -1,0 +1,107 @@
+Chapter 21: Get on the Bus
+----------------------------
+
+bus = collection of digital signals sent to every board in the computer
+    4 types:
+      1. address signals = made by microprocessor, used to address RAM
+      2. data output = by microprocessor, used to write data to RAM; becomes in	
+      		put signal to components using this signal
+      3. data input = signals from other parts, read by microprocessor; usu. 
+      		from RAM, how microprocessor reads from memory
+      4. control signals = extra signals used to control microprocessor
+    supplies power to the other boards
+
+different components communicate via bus
+
+bus contains:
+    motherboard
+    expansion slots = sockets in  motherboard
+    expansion boards = circuit boards that fit into the slots	 
+    
+8 interrupt signals so components get immediate CPU time
+  ie. pressing key on keyboard
+
+buses replaced when # of address signals needed increases/ microprocessors 
+	are faster
+	  radio frequency interference = buses operating @ slower speeds than 
+	  microprocessor
+
+read access time = time needed for data output to be valid after address is 
+	inputted (in ns)
+
+bank = set of chips wired together to store a whole byte (ie. collection of 
+	RAM to make larger array of RAM)
+
+dual inline package (DIP)
+     wire a memory board to specify which components correspond to specific 
+     	address
+
+tri-state = 3 possible output states (hi, lo, nothing)
+	  essential to the operation of a bus
+
+SRAM = static RAM
+     needs 4 transistors per bit of memory
+     retain memory as long as there's power
+
+DRAM = dynamic RAM
+     needs 1 transistor per bit of memory
+     need more complex support circuitry		
+     requires refresh cycle
+
+refresh cycle = contents are accessed often, even if contents aren't needed
+
+SIMM = single inline memory modules
+
+DIMM = dual inline memory module
+
+video display adapter =	signal to video display
+
+video board = spot for the video display adapter
+      includes character generator (has pixel patterns for all ASCII char) usu 
+      	ROM
+
+graphics board = video board not restricted to text
+
+scan line = each horizontal line that the video is displayed on the monitor
+
+horizontal retrace = movement to the next row to draw the pixels 
+
+vertical retrace = movement from bottom right-hand corner to top left-hand to 
+	start horizontal retrace
+
+bandwidth = upper limit to speed that something can respond to a given signal
+
+each character of text identified by:
+      7-bit ASCII code
+      64-bit visual appearance code 
+
+ROM = read-only memory, no data input
+
+scan code = computer program to determine what ASCII code corresponds to a 
+	particular key being pressed
+
+long-term storage devices
+	  paper/cards -> not efficient or reusable
+	  ***magnetic storage - Oberlin Smith***
+	  	   created 20 yrs later by Valdemar Poulsen as answering machine 
+		   	   electromagnet magnetizes a moving wire proportional to waveform of 
+		   	   	the sound
+			   magnetized wire can induce current to same degree as it's moved along 
+			   		coils of wire in magnet
+		   **cassette tape = paper tape made w/celluluse acetate base coated w/iron 
+		   			particles
+		   	   not ideal b/c unable to move to arbitrary spot on tape
+		   magnetic disk - geometrically better for fast access 
+	  	   	   invented before cassette for audio recording
+			   **floppy disk** = single sheet of coated plastic w/i protective casing
+			   		(cardboard, then plastic)
+			   **hard disk** = multiple metal disks built into drive
+			   	  surface divided into tracks (concentric rings)
+				  each track divided into sectors (like slices of pie)
+			   comes w/own electrical interface & interface for microprocessor
+			   hard drive interfaces:
+			   	SCSI = small computer system interface
+				ESDI = enhanced small device interface
+				IDE = integrated device electronics
+			    
+	  	    

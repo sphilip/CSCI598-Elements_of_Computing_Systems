@@ -1,0 +1,5 @@
+Chapter 22: The OS
+----------------------
+without software, computer (RAM, keyboard, screen, disk drive,etc), nothing meaningful is displayed
+
+when microprocessor turned on/reset, starts executing machine code @ particular memory address
